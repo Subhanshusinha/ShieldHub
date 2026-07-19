@@ -32,6 +32,9 @@ app.use(express.static('public', {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Trust Render proxy for secure cookies
+app.set('trust proxy', 1);
+
 // Session Middleware
 app.use(session({
   secret: process.env.SESSION_SECRET || 'default_secret_key',
