@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' — ShieldHub' : 'ShieldHub' %></title>
+  <meta name="description" content="ShieldHub — Everything about protection in one hub. Phishing detection, vulnerability scanning, password strength, steganography and more.">
+  <link rel="stylesheet" href="/css/style.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script>
+    // Prevent flash of wrong theme
+    (function(){
+      const t = localStorage.getItem('theme');
+      if(t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+</head>
+<body>
+
+<!-- ============ SECURITY PRELOADER SPLASH SCREEN ============ -->
+<div id="security-preloader">
+  <div class="preloader-content">
+    <div class="preloader-shield-wrapper">
+      <div class="preloader-glow-ring"></div>
+      <div class="preloader-shield">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="preloader-scanner-line"></div>
+    </div>
+    <div class="preloader-text-wrapper">
+      <h2 class="preloader-text">You are entering in security world, please wait...</h2>
+      <div class="preloader-progress-track">
+        <div class="preloader-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Session check taaki user jab dynamic reload kare ya inner pages par jaaye tab bar-bar preloader na dikhe
+    if (sessionStorage.getItem('shieldhub-preloader-shown')) {
+      document.write('<style>#security-preloader { display: none !important; }</style>');
+    } else {
+      sessionStorage.setItem('shieldhub-preloader-shown', 'true');
+      window.addEventListener('DOMContentLoaded', () => {
+        const preloader = document.getElementById('security-preloader');
+        setTimeout(() => {
+          preloader.classList.add('fade-out');
+          setTimeout(() => {
+            preloader.remove();
+          }, 600);
+        }, 3000);
+      });
+    }
+  })();
+</script>
+
+<!-- ============ NAVBAR ============ -->
+<header class="header" id="mainHeader">
+  <div class="container">
+    <!-- Logo -->
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon"><i class="fas fa-shield-alt"></i></div>
+      <span class="nav-logo-text">Shield<span>Hub</span></span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="nav-desktop">
+      <a href="/" class="nav-link" id="nav-home"><i class="fas fa-house"></i> Home</a>
+      <a href="/about" class="nav-link" id="nav-about"><i class="fas fa-info-circle"></i> About</a>
+      <a href="/cybersecurity-article" class="nav-link" id="nav-articles"><i class="fas fa-newspaper"></i> Articles</a>
+
+      <!-- Tools Dropdown -->
+      <div class="nav-dropdown" id="toolsDropdown">
+        <button class="nav-dropdown-btn" id="toolsDropdownBtn">
+          <i class="fas fa-toolbox"></i> Tools
+          <i class="fas fa-chevron-down chevron"></i>
+        </button>
+        <div class="nav-dropdown-panel">
+          <a href="/phishing-detective" class="nav-dropdown-item">
+            <div class="nav-dropdown-item-icon icon-phishing"><i class="fas fa-user-secret"></i></div>
+            <div>
+              <div class="nav-dropdown-item-title">Phishing Detective</div>
+              <div class="nav-dropdown-item-desc">Detect suspicious URLs</div>
+            </div>
+          </a>
+          <a href="/vulnerability-scanner" class="nav-dropdown-item">
+            <div class="nav-dropdown-item-icon icon-vuln"><i class="fas fa-search"></i></div>
+            <div>
+              <div class="nav-dropdown-item-title">Vulnerability Scanner</div>
+              <div class="nav-dropdown-item-desc">Scan for weaknesses</div>
+            </div>
+          </a>
+          <a href="/password-strength" class="nav-dropdown-item">
+            <div class="nav-dropdown-item-icon icon-password"><i class="fas fa-key"></i></div>
+            <div>
+              <div class="nav-dropdown-item-title">Password Strength</div>
+              <div class="nav-dropdown-item-desc">Check your password</div>
+            </div>
+          </a>
+          <a href="/steganography" class="nav-dropdown-item">
+            <div class="nav-dropdown-item-icon icon-steg"><i class="fas fa-mask"></i></div>
+            <div>
+              <div class="nav-dropdown-item-title">Steganography</div>
+              <div class="nav-dropdown-item-desc">Hide secret messages</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Right Controls -->
+    <div class="nav-controls">
+      <!-- Search -->
+      <div class="nav-search" id="navSearch">
+        <form action="/search" method="GET" class="nav-search-form">
+          <input type="text" name="q" placeholder="Search ShieldHub..." class="nav-search-input" id="navSearchInput">
+          <button type="button" class="nav-icon-btn" id="searchToggle" title="Search">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Dark Mode Toggle -->
+      <button class="nav-icon-btn dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+      </button>
+
+      <!-- Hamburger -->
+      <button class="nav-hamburger" id="navHamburger" aria-label="Open Menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="nav-drawer-backdrop" id="drawerBackdrop"></div>
+<nav class="nav-drawer" id="navDrawer">
+  <div class="drawer-header">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon" style="width:34px;height:34px;font-size:15px;"><i class="fas fa-shield-alt"></i></div>
+      <span class="nav-logo-text" style="font-size:18px;">Shield<span>Hub</span></span>
+    </a>
+    <button class="drawer-close" id="drawerClose"><i class="fas fa-times"></i></button>
+  </div>
+
+  <!-- Search inside drawer -->
+  <div class="drawer-search">
+    <form action="/search" method="GET" class="drawer-search-form">
+      <input type="text" name="q" placeholder="Search ShieldHub..." class="drawer-search-input">
+      <button type="submit" class="admin-btn admin-btn-primary" style="padding:10px 14px;"><i class="fas fa-search"></i></button>
+    </form>
+  </div>
+
+  <!-- Navigation -->
+  <div class="drawer-section">
+    <div class="drawer-section-label">Navigation</div>
+    <a href="/" class="drawer-nav-link" style="animation-delay:0.05s"><i class="fas fa-house"></i> Home</a>
+    <a href="/about" class="drawer-nav-link" style="animation-delay:0.1s"><i class="fas fa-info-circle"></i> About Us</a>
+    <a href="/cybersecurity-article" class="drawer-nav-link" style="animation-delay:0.15s"><i class="fas fa-newspaper"></i> Articles</a>
+  </div>
+
+  <!-- Tools -->
+  <div class="drawer-section">
+    <div class="drawer-section-label">Security Tools</div>
+    <div class="drawer-tools-grid">
+      <a href="/phishing-detective" class="drawer-tool-card" style="animation-delay:0.2s">
+        <div class="drawer-tool-icon icon-phishing"><i class="fas fa-user-secret"></i></div>
+        <span>Phishing<br>Detective</span>
+      </a>
+      <a href="/vulnerability-scanner" class="drawer-tool-card" style="animation-delay:0.25s">
+        <div class="drawer-tool-icon icon-vuln"><i class="fas fa-search"></i></div>
+        <span>Vuln.<br>Scanner</span>
+      </a>
+      <a href="/password-strength" class="drawer-tool-card" style="animation-delay:0.3s">
+        <div class="drawer-tool-icon icon-password"><i class="fas fa-key"></i></div>
+        <span>Password<br>Check</span>
+      </a>
+      <a href="/steganography" class="drawer-tool-card" style="animation-delay:0.35s">
+        <div class="drawer-tool-icon icon-steg"><i class="fas fa-mask"></i></div>
+        <span>Stegano-<br>graphy</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="drawer-footer">
+    <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+      <a href="/admin/dashboard" class="drawer-admin-btn">
+        <i class="fas fa-gauge-high"></i> Admin Dashboard
+      </a>
+    <% } else { %>
+      <a href="/admin/login" class="drawer-admin-btn">
+        <i class="fas fa-lock"></i> Admin Login
+      </a>
+    <% } %>
+  </div>
+</nav>
+
+<!-- ============ MAIN CONTENT ============ -->
+<main class="main-content">
+
+<script>
+(function(){
+  const header = document.getElementById('mainHeader');
+  const hamburger = document.getElementById('navHamburger');
+  const drawer = document.getElementById('navDrawer');
+  const backdrop = document.getElementById('drawerBackdrop');
+  const drawerClose = document.getElementById('drawerClose');
+  const darkToggle = document.getElementById('darkModeToggle');
+  const searchToggle = document.getElementById('searchToggle');
+  const navSearch = document.getElementById('navSearch');
+  const navSearchInput = document.getElementById('navSearchInput');
+  const toolsDropdown = document.getElementById('toolsDropdown');
+  const toolsBtn = document.getElementById('toolsDropdownBtn');
+
+  // Scroll effect
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Active nav link
+  const path = window.location.pathname;
+  document.querySelectorAll('.nav-link').forEach(link => {
+    if (link.getAttribute('href') === path) link.classList.add('active');
+  });
+
+  // Hamburger / Drawer
+  function openDrawer() {
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    hamburger.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    hamburger.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  hamburger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+  drawerClose.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+
+  // Dark Mode
+  function setTheme(t) {
+    if (t === 'dark') {
+      document.documentElement.setAttribute('data-theme','dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('theme', t);
+  }
+  darkToggle.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+
+  // Search toggle
+  searchToggle.addEventListener('click', () => {
+    navSearch.classList.toggle('open');
+    if (navSearch.classList.contains('open')) navSearchInput.focus();
+  });
+  document.addEventListener('click', (e) => {
+    if (!navSearch.contains(e.target)) navSearch.classList.remove('open');
+  });
+
+  // Tools Dropdown
+  toolsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toolsDropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!toolsDropdown.contains(e.target)) toolsDropdown.classList.remove('open');
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+</script>

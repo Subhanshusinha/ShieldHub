@@ -1,0 +1,1393 @@
+<%- include('partials/header') %>
+
+    <!-- ============================================================
+         WEBSITE SECTION: HERO LANDING (Home page ka sabse upar ka banner)
+         Isme typing headline animation, dynamic cyber quotes rotator aur Read articles button dikhta hai.
+         ============================================================ -->
+    <section class="hero">
+        <div class="hero-bg-aurora">
+            <div class="aurora-blob b-1"></div>
+            <div class="aurora-blob b-2"></div>
+            <div class="aurora-blob b-3"></div>
+            <div class="hero-noise"></div>
+        </div>
+        <div class="container">
+            <div class="hero-container">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="typing-text"></span><span class="cursor">|</span>
+                    </h1>
+                    <p class="hero-description">ShieldHub - Where Knowledge Becomes Your Shield...</p>
+
+                    <div class="hero-quote-box">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p id="cyber-quote" class="hero-quote">Loading motivation...</p>
+                    </div>
+
+                    <div class="hero-buttons">
+                        <a href="/cybersecurity-article" class="hero-btn-special">
+                            <span class="btn-content">
+                                <i class="fas fa-newspaper"></i>
+                                <span>Read CyberCrime Articles</span>
+                            </span>
+                            <span class="btn-glow"></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="shield-container">
+                        <div class="shield-glow"></div>
+                        <div class="shield-icon-wrapper">
+                            <i class="fas fa-shield-alt shield-icon"></i>
+                            <div class="shield-rings">
+                                <div class="ring ring-1"></div>
+                                <div class="ring ring-2"></div>
+                                <div class="ring ring-3"></div>
+                            </div>
+                        </div>
+                        <div class="floating-icons">
+                            <i class="fas fa-lock float-icon i-1"></i>
+                            <i class="fas fa-user-secret float-icon i-2"></i>
+                            <i class="fas fa-key float-icon i-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Typing Effect
+                const typingText = document.querySelector('.typing-text');
+                const phrases = ["Secure Your Digital Life", "Master Cybersecurity", "Defend Against Threats"];
+                let phraseIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let typeSpeed = 100;
+
+                function typeEffect() {
+                    const currentPhrase = phrases[phraseIndex];
+
+                    if (isDeleting) {
+                        typingText.textContent = currentPhrase.substring(0, charIndex - 1);
+                        charIndex--;
+                        typeSpeed = 50;
+                    } else {
+                        typingText.textContent = currentPhrase.substring(0, charIndex + 1);
+                        charIndex++;
+                        typeSpeed = 100;
+                    }
+
+                    if (!isDeleting && charIndex === currentPhrase.length) {
+                        isDeleting = true;
+                        typeSpeed = 2000; // Pause at end
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        typeSpeed = 500; // Pause before new phrase
+                    }
+
+                    setTimeout(typeEffect, typeSpeed);
+                }
+
+                // Start typing effect
+                setTimeout(typeEffect, 1000);
+
+                // Quote Rotator
+                const quotes = [
+                    "Security is not a product, but a process. – Bruce Schneier",
+                    "The only truly secure system is one that is powered off. – Gene Spafford",
+                    "Passwords are like underwear: change them often. – Chris Pirillo",
+                    "Cybersecurity is much more than a matter of IT. – Stephane Nappo",
+                    "It takes 20 years to build a reputation and few minutes of cyber-incident to ruin it. – Stephane Nappo",
+                    "There are only two types of companies: those that have been hacked and those that will be. – Robert Mueller",
+                    "Privacy is not an option, and it shouldn't be the price we accept for just getting on the Internet. – Gary Kovacs",
+                    "Security is always excessive until it's not enough. – Robbie Sinclair",
+                    "The quieter you become, the more you are able to hear. – Kali Linux",
+                    "Amateurs hack systems, professionals hack people. – Bruce Schneier"
+                ];
+
+                let currentQuoteIndex = 0;
+                const quoteElement = document.getElementById('cyber-quote');
+
+                function updateQuote() {
+                    quoteElement.style.opacity = 0;
+                    setTimeout(() => {
+                        quoteElement.textContent = quotes[currentQuoteIndex];
+                        quoteElement.style.opacity = 1;
+                        currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+                    }, 500);
+                }
+
+                updateQuote();
+                setInterval(updateQuote, 6000);
+            </script>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         WEBSITE SECTION: SCROLL DOWN INDICATOR (Tools section par jump karne ke liye mouse scroll visual)
+         Isme animated mouse wheel aur bouncing arrows hain jo Tools section par redirect karte hain.
+         ============================================================ -->
+    <a href="#tools-section" class="scroll-down-section" style="text-decoration: none; cursor: pointer;">
+        <div class="scroll-down-content">
+            <p class="scroll-text">Scroll Down to Explore the Security World</p>
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <div class="scroll-arrows">
+                <i class="fas fa-chevron-down arrow-1"></i>
+                <i class="fas fa-chevron-down arrow-2"></i>
+                <i class="fas fa-chevron-down arrow-3"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- ============================================================
+         WEBSITE SECTION: SECURITY TOOLS GRID (Hamare tool boxes ka grid)
+         Yahan saare tools sequential grids mein dikhte hain (Latest Articles, Phishing Detective, Steganography, Vulnerability Scanner, Password Strength).
+         ============================================================ -->
+    <section class="tools-section" id="tools-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-tools"></i>
+                Our Security Tools
+            </h2>
+            <p class="section-subtitle">Protect yourself with our powerful cybersecurity tools</p>
+            <div class="tools-grid">
+                <!-- Cybersecurity Article Card (Featured / First) -->
+                <% if (typeof articles !== 'undefined' && articles && articles.length > 0) { %>
+                    <% const firstArticle = articles[0]; %>
+                    <div class="tool-card article-card featured-article" id="rotating-article-card">
+                        <div class="tool-card-glow"></div>
+                        <div class="article-badge"><i class="fas fa-bullhorn"></i> <span id="article-badge-text">Latest Cyber News</span></div>
+                        
+                        <div class="article-image-container">
+                            <img id="article-img" src="<%= firstArticle.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80' %>" alt="<%= firstArticle.title %>" class="article-card-image">
+                            <span id="article-category" class="category-pill <%= firstArticle.category || 'breach' %>"><%= (firstArticle.category || 'breach').toUpperCase() %></span>
+                        </div>
+
+                        <div class="article-card-body">
+                            <h3 id="article-title"><%= firstArticle.title %></h3>
+                            <p id="article-desc" class="article-desc"><%= firstArticle.description.substring(0, 110) %>...</p>
+                            
+                            <div class="article-meta">
+                                <span><i class="fas fa-calendar-alt"></i> <span id="article-date"><%= new Date(firstArticle.createdAt).toLocaleDateString() %></span></span>
+                                <span><i class="fas fa-thumbs-up"></i> <span id="article-likes"><%= firstArticle.likes || 0 %></span></span>
+                            </div>
+
+                            <a id="article-link" href="/articles/<%= firstArticle._id %>" class="tool-btn article-btn">
+                                <span>Read Full Article</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const articles = <%- JSON.stringify(articles) %>;
+                            if (articles && articles.length > 0) {
+                                let currentIndex = 0;
+                                
+                                const card = document.getElementById('rotating-article-card');
+                                const badgeText = document.getElementById('article-badge-text');
+                                const img = document.getElementById('article-img');
+                                const category = document.getElementById('article-category');
+                                const title = document.getElementById('article-title');
+                                const desc = document.getElementById('article-desc');
+                                const date = document.getElementById('article-date');
+                                const likes = document.getElementById('article-likes');
+                                const link = document.getElementById('article-link');
+
+                                if (articles.length > 1) {
+                                    setInterval(() => {
+                                        // Start fade out transition
+                                        card.classList.add('rotating');
+
+                                        setTimeout(() => {
+                                            currentIndex = (currentIndex + 1) % articles.length;
+                                            const art = articles[currentIndex];
+
+                                            // Update values
+                                            badgeText.textContent = 'Latest Cyber News';
+                                            img.src = art.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80';
+                                            img.alt = art.title;
+                                            
+                                            // Update category class and text
+                                            const cat = art.category || 'breach';
+                                            category.className = `category-pill ${cat}`;
+                                            category.textContent = cat.toUpperCase();
+
+                                            title.textContent = art.title;
+                                            
+                                            // Truncate description
+                                            const shortDesc = art.description.length > 110 
+                                                ? art.description.substring(0, 110) + '...' 
+                                                : art.description;
+                                            desc.textContent = shortDesc;
+
+                                            date.textContent = new Date(art.createdAt).toLocaleDateString();
+                                            likes.textContent = art.likes || 0;
+                                            
+                                            link.href = `/articles/${art._id}`;
+
+                                            // Fade in transition
+                                            card.classList.remove('rotating');
+                                        }, 400);
+
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    </script>
+                <% } %>
+
+                <!-- Phishing Detective Card -->
+                <div class="tool-card">
+                    <div class="tool-card-glow"></div>
+                    <div class="tool-icon phishing">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h3>Phishing Detective</h3>
+                    <p>Analyze suspicious emails and URLs to detect phishing attempts before they harm you.</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Email Analysis</li>
+                        <li><i class="fas fa-check"></i> URL Scanning</li>
+                        <li><i class="fas fa-check"></i> Real-time Detection</li>
+                    </ul>
+                    <a href="/phishing-detective" class="tool-btn">
+                        <span>Try Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Steganography Tool Card -->
+                <div class="tool-card">
+                    <div class="tool-card-glow"></div>
+                    <div class="tool-icon steganography">
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    <h3>Steganography Tool</h3>
+                    <p>Hide secret messages inside images or reveal hidden messages from them securely.</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Hide Text in Images</li>
+                        <li><i class="fas fa-check"></i> Reveal Secret Messages</li>
+                        <li><i class="fas fa-check"></i> Client-Side Security</li>
+                    </ul>
+                    <a href="/steganography" class="tool-btn">
+                        <span>Try Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Vulnerability Scanner Card -->
+                <div class="tool-card featured">
+                    <div class="tool-card-glow"></div>
+                    <div class="featured-badge">Popular</div>
+                    <div class="tool-icon scanner">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Vulnerability Scanner</h3>
+                    <p>Scan websites and systems to identify security vulnerabilities and weaknesses.</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Deep Scanning</li>
+                        <li><i class="fas fa-check"></i> Risk Assessment</li>
+                        <li><i class="fas fa-check"></i> Detailed Reports</li>
+                    </ul>
+                    <a href="/vulnerability-scanner" class="tool-btn">
+                        <span>Scan Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Password Strength Card -->
+                <div class="tool-card">
+                    <div class="tool-card-glow"></div>
+                    <div class="tool-icon password">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>Password Strength</h3>
+                    <p>Test your password security and get suggestions to make it stronger.</p>
+                    <ul class="tool-features">
+                        <li><i class="fas fa-check"></i> Strength Analysis</li>
+                        <li><i class="fas fa-check"></i> Crack Time Estimate</li>
+                        <li><i class="fas fa-check"></i> Improvement Tips</li>
+                    </ul>
+                    <a href="/password-strength" class="tool-btn">
+                        <span>Check Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         WEBSITE SECTION: CYBERSECURITY TIPS ROTATOR (Cybersecurity tips rotate karne ke liye)
+         Yahan dynamic tips bar-progress animation ke sath change hoti rehti hain.
+         ============================================================ -->
+    <section class="daily-content cyber-tips-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i>
+                Cybersecurity Tips
+            </h2>
+            <div class="tips-container">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <p id="cyber-tip" class="tip-text">Loading tip...</p>
+                    <div class="tip-progress">
+                        <div class="tip-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const cyberTips = [
+            "Use strong, unique passwords for each account. Consider using a password manager to keep track of them securely.",
+            "Enable Two-Factor Authentication (2FA) on all important accounts for an extra layer of security.",
+            "Be cautious of phishing emails. Always verify the sender before clicking on links or downloading attachments.",
+            "Keep your software and operating systems updated to protect against the latest security vulnerabilities.",
+            "Use a VPN when connecting to public Wi-Fi networks to encrypt your internet connection.",
+            "Regularly backup your important data to an external drive or secure cloud storage.",
+            "Never share sensitive information like passwords, PINs, or OTPs with anyone, even if they claim to be from your bank.",
+            "Check website URLs carefully before entering personal information. Look for HTTPS and valid certificates.",
+            "Lock your devices with strong passwords, PINs, or biometric authentication like fingerprint or face recognition.",
+            "Install reputable antivirus software and keep it updated to protect against malware and viruses."
+        ];
+
+        let currentTipIndex = 0;
+        const tipElement = document.getElementById('cyber-tip');
+        const progressBar = document.querySelector('.tip-progress-bar');
+
+        function updateTip() {
+            tipElement.style.opacity = 0;
+            tipElement.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                tipElement.textContent = cyberTips[currentTipIndex];
+                tipElement.style.opacity = 1;
+                tipElement.style.transform = 'translateY(0)';
+                currentTipIndex = (currentTipIndex + 1) % cyberTips.length;
+
+                progressBar.style.transition = 'none';
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 10s linear';
+                    progressBar.style.width = '100%';
+                }, 50);
+            }, 500);
+        }
+
+        updateTip();
+        setInterval(updateTip, 10000);
+    </script>
+
+    <!-- ============================================================
+         WEBSITE SECTION: CYBERSECURITY QUIZ GAME (Interactive security quiz game)
+         Yahan user easy, medium ya hard levels choose karke MCQ quiz test de sakta hai.
+         ============================================================ -->
+    <section class="quiz-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-brain"></i>
+                Test Your Cybersecurity Knowledge
+            </h2>
+            <div class="quiz-container">
+                <div class="quiz-layout-wrapper">
+                    <!-- Main Quiz Content (Left Side) -->
+                    <div class="quiz-main">
+                        <!-- Quiz Difficulty Selection -->
+                        <div id="quiz-difficulty-selector" class="quiz-difficulty-selector">
+                            <h3 class="difficulty-title">Choose Your Challenge</h3>
+                            <p class="difficulty-subtitle">Select the number of questions you want to answer</p>
+                            <div class="difficulty-options">
+                                <button class="difficulty-btn easy" onclick="startQuiz(5, 'easy')">
+                                    <div class="difficulty-icon">
+                                        <i class="fas fa-leaf"></i>
+                                    </div>
+                                    <div class="difficulty-info">
+                                        <span class="difficulty-name">Easy</span>
+                                        <span class="difficulty-count">5 Questions</span>
+                                    </div>
+                                    <div class="difficulty-badge easy-badge">Beginner</div>
+                                </button>
+                                <button class="difficulty-btn medium" onclick="startQuiz(15, 'medium')">
+                                    <div class="difficulty-icon">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="difficulty-info">
+                                        <span class="difficulty-name">Medium</span>
+                                        <span class="difficulty-count">15 Questions</span>
+                                    </div>
+                                    <div class="difficulty-badge medium-badge">Intermediate</div>
+                                </button>
+                                <button class="difficulty-btn hard" onclick="startQuiz(25, 'hard')">
+                                    <div class="difficulty-icon">
+                                        <i class="fas fa-skull-crossbones"></i>
+                                    </div>
+                                    <div class="difficulty-info">
+                                        <span class="difficulty-name">Hard</span>
+                                        <span class="difficulty-count">25 Questions</span>
+                                    </div>
+                                    <div class="difficulty-badge hard-badge">
+                                        <i class="fas fa-exclamation-triangle"></i> Expert Challenge
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Card (Hidden by default) -->
+                        <div id="quiz-card-container" class="quiz-card-wrapper" style="display: none;">
+                            <div class="quiz-card">
+                                <div class="quiz-header">
+                                    <span class="quiz-progress-text">Question <span id="current-question">1</span> of
+                                        <span id="total-questions">5</span></span>
+                                    <div class="quiz-difficulty-indicator" id="quiz-difficulty-indicator"></div>
+                                    <div class="quiz-score">Score: <span id="quiz-score">0</span></div>
+                                    <button class="exit-quiz-btn" onclick="confirmExitQuiz()" title="Exit Quiz"><i class="fas fa-times-circle"></i> Exit Quiz</button>
+                                </div>
+                                <div class="quiz-progress-bar">
+                                    <div id="quiz-progress" class="quiz-progress-fill"></div>
+                                </div>
+                                <div id="quiz-question-container" class="quiz-question-container">
+                                    <h3 id="quiz-question" class="quiz-question">Loading question...</h3>
+                                    <div id="quiz-options" class="quiz-options"></div>
+                                </div>
+                                <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+                                <div id="quiz-complete" class="quiz-complete hidden">
+                                    <div class="quiz-complete-icon"><i class="fas fa-trophy"></i></div>
+                                    <h3>Quiz Complete!</h3>
+                                    <p>Your Score: <span id="final-score">0</span>/<span id="final-total">5</span></p>
+                                    <div class="quiz-result-message" id="quiz-result-message"></div>
+                                    <button id="restart-quiz" class="btn-primary"><i class="fas fa-redo"></i> Try
+                                        Again</button>
+                                    <button id="change-difficulty" class="btn-secondary"><i class="fas fa-list"></i>
+                                        Change
+                                        Difficulty</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Content (Right Side) -->
+                    <div class="quiz-sidebar">
+                        <div class="resource-card-container">
+                            <a href="<%= resource.url %>" target="_blank" class="resource-card compact">
+                                <div class="resource-icon-wrapper">
+                                    <i class="fas fa-user-shield resource-icon"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <h4 class="resource-title">
+                                        <%= resource.title %>
+                                    </h4>
+                                    <p class="resource-desc"><%- resource.description.replace(/\n/g, '<br>' ) %></p>
+                                    <span class="resource-cta">Start Learning <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                                <div class="resource-glow"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* Exit Quiz Button Styles */
+        .exit-quiz-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--t-fast) var(--ease);
+        }
+        .exit-quiz-btn:hover {
+            background: var(--danger);
+            color: #fff;
+            border-color: var(--danger);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Quiz Difficulty Selector Styles */
+        .quiz-difficulty-selector {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .difficulty-title {
+            font-size: 28px;
+            color: var(--text-1);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .difficulty-subtitle {
+            color: var(--text-2);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .difficulty-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 25px;
+            border-radius: 20px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .difficulty-btn.easy {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.18));
+            border-color: var(--success);
+        }
+
+        .difficulty-btn.easy:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
+        }
+
+        .difficulty-btn.medium {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.18));
+            border-color: var(--warning);
+        }
+
+        .difficulty-btn.medium:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.3);
+        }
+
+        .difficulty-btn.hard {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.18));
+            border-color: var(--danger);
+        }
+
+        .difficulty-btn.hard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.3);
+        }
+
+        .difficulty-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .difficulty-btn.easy .difficulty-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .difficulty-btn.medium .difficulty-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .difficulty-btn.hard .difficulty-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .difficulty-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .difficulty-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-1);
+        }
+
+        .difficulty-count {
+            font-size: 14px;
+            color: var(--text-3);
+        }
+
+        .difficulty-badge {
+            position: absolute;
+            top: 10px;
+            right: -35px;
+            padding: 5px 40px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transform: rotate(45deg);
+        }
+
+        .easy-badge {
+            background: var(--success);
+            color: white;
+        }
+
+        .medium-badge {
+            background: var(--warning);
+            color: white;
+        }
+
+        .hard-badge {
+            background: var(--danger);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+            }
+
+            to {
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+            }
+        }
+
+        /* Quiz Difficulty Indicator */
+        .quiz-difficulty-indicator {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .quiz-difficulty-indicator.easy {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .quiz-difficulty-indicator.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .quiz-difficulty-indicator.hard {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .quiz-result-message {
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .quiz-result-message.excellent {
+            color: var(--success);
+        }
+
+        .quiz-result-message.good {
+            color: var(--warning);
+        }
+
+        .quiz-result-message.try-again {
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .difficulty-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .difficulty-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* Resource Card Styles */
+        .resource-card-container {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+
+        .resource-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Layout Styles */
+        .quiz-layout-wrapper {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .quiz-main {
+            flex: 1;
+        }
+
+        .quiz-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* Compact Resource Card */
+        .resource-card.compact {
+            flex-direction: column;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .resource-card.compact .resource-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+        }
+
+        .resource-card.compact .resource-icon {
+            font-size: 32px;
+        }
+
+        .resource-card.compact .resource-info {
+            align-items: center;
+            gap: 8px;
+        }
+
+        .resource-card.compact .resource-title {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .resource-card.compact .resource-desc {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .resource-card.compact .resource-cta {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .resource-card.compact:hover .resource-cta {
+            background: #4338ca;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 56, 202, 0.3);
+        }
+
+        .resource-card.compact:hover .resource-cta i {
+            transform: translateX(3px);
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 992px) {
+            .quiz-layout-wrapper {
+                flex-direction: column-reverse;
+                gap: 30px;
+            }
+
+            .quiz-sidebar {
+                width: 100%;
+            }
+
+            .resource-card.compact {
+                flex-direction: row;
+                text-align: left;
+                padding: 20px;
+            }
+
+            .resource-card.compact .resource-icon-wrapper {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 0;
+            }
+
+            .resource-card.compact .resource-icon {
+                font-size: 24px;
+            }
+
+            .resource-card.compact .resource-info {
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .resource-card.compact .resource-title {
+                margin-top: 0;
+                font-size: 18px;
+            }
+
+            .resource-card.compact .resource-desc {
+                margin-bottom: 5px;
+            }
+
+            .resource-card.compact .resource-cta {
+                background: transparent;
+                color: #6366f1;
+                padding: 0;
+                font-size: 14px;
+            }
+
+            .resource-card.compact:hover .resource-cta {
+                background: transparent;
+                color: #4f46e5;
+                box-shadow: none;
+                transform: none;
+            }
+        }
+
+        /* Dark Mode Updates */
+        [data-theme="dark"] .resource-card.compact {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-color: rgba(51, 65, 85, 0.5);
+        }
+
+        [data-theme="dark"] .resource-card.compact .resource-cta {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+
+        [data-theme="dark"] .resource-card.compact:hover .resource-cta {
+            background: #6366f1;
+            color: white;
+        }
+
+        .resource-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover .resource-icon-wrapper {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .resource-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .resource-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .resource-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .resource-desc {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .resource-cta {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6366f1;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .resource-card:hover .resource-cta {
+            opacity: 1;
+        }
+
+        .resource-cta i {
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover .resource-cta i {
+            transform: translateX(5px);
+        }
+
+        .resource-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .resource-card:hover .resource-glow {
+            transform: translateX(100%);
+            transition: 0.5s;
+        }
+
+        /* Dark Mode Support for Resource Card */
+        [data-theme="dark"] .resource-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        [data-theme="dark"] .resource-title {
+            color: #f1f5f9;
+        }
+
+        [data-theme="dark"] .resource-desc {
+            color: #94a3b8;
+        }
+    </style>
+
+    <script>
+        // Extended quiz questions pool (25+ questions)
+        const allQuizQuestions = [
+            // Easy questions (1-10)
+            { question: "What does 'phishing' refer to in cybersecurity?", options: ["A type of fishing sport", "A fraudulent attempt to obtain sensitive information", "A computer virus", "A type of firewall"], correct: 1, difficulty: "easy" },
+            { question: "What is the recommended minimum length for a strong password?", options: ["4 characters", "6 characters", "8 characters", "12 characters or more"], correct: 3, difficulty: "easy" },
+            { question: "What does 2FA stand for?", options: ["Two-Factor Authentication", "Two-File Access", "Two-Firewall Activation", "Two-Form Authorization"], correct: 0, difficulty: "easy" },
+            { question: "Which of the following is a sign of a phishing email?", options: ["Personalized greeting", "Urgent call to action with threats", "Company's official email domain", "Clear contact information"], correct: 1, difficulty: "easy" },
+            { question: "What is malware?", options: ["Hardware for computers", "Malicious software designed to harm or exploit devices", "A type of antivirus", "A secure browser"], correct: 1, difficulty: "easy" },
+            { question: "What does HTTPS stand for?", options: ["HyperText Transfer Protocol Secure", "High Transfer Protocol System", "HyperText Technical Protocol Secure", "Home Transfer Protocol Service"], correct: 0, difficulty: "easy" },
+            { question: "What is a VPN used for?", options: ["Speeding up internet", "Encrypting internet connection and hiding IP address", "Downloading files faster", "Removing viruses"], correct: 1, difficulty: "easy" },
+            { question: "What does the padlock icon in a browser indicate?", options: ["The website is locked", "The connection is encrypted (HTTPS)", "You cannot access the website", "The website is loading"], correct: 1, difficulty: "easy" },
+            { question: "What is a firewall?", options: ["A wall made of fire", "A network security system that monitors traffic", "A type of virus", "An email client"], correct: 1, difficulty: "medium" },
+            { question: "What is ransomware?", options: ["Free software", "Malware that encrypts files and demands payment", "A security tool", "A type of firewall"], correct: 1, difficulty: "medium" },
+
+            // Medium questions (11-18)
+            { question: "What should you do if you receive a suspicious email from your bank?", options: ["Click the link immediately", "Reply with your account details", "Contact your bank directly using official channels", "Forward it to everyone"], correct: 2, difficulty: "medium" },
+            { question: "What is social engineering in cybersecurity?", options: ["Building social media apps", "Psychological manipulation to trick users into revealing information", "A type of software development", "Network engineering"], correct: 1, difficulty: "medium" },
+            { question: "What is a brute force attack?", options: ["Physical attack on servers", "Trial-and-error method to guess passwords", "A type of firewall", "A security software"], correct: 1, difficulty: "medium" },
+            { question: "Why should you avoid using public Wi-Fi for banking?", options: ["It's too slow", "Data can be intercepted by hackers", "Banks don't allow it", "It uses too much battery"], correct: 1, difficulty: "medium" },
+            { question: "What is a security patch?", options: ["A physical patch for computers", "A software update that fixes security vulnerabilities", "A type of antivirus", "A network cable"], correct: 1, difficulty: "medium" },
+            { question: "What is spyware?", options: ["A spy movie", "Software that secretly monitors and collects information", "Antivirus software", "A type of browser"], correct: 1, difficulty: "medium" },
+            { question: "What is identity theft?", options: ["Losing your ID card", "Someone stealing your personal information to commit fraud", "Changing your name legally", "A type of cybersecurity tool"], correct: 1, difficulty: "medium" },
+            { question: "How often should you update your passwords?", options: ["Never", "Every 10 years", "Every 3-6 months or when breached", "Only when you forget them"], correct: 2, difficulty: "medium" },
+
+            // Hard questions (19-25)
+            { question: "What is a zero-day exploit?", options: ["An attack on January 1st", "An attack on a vulnerability unknown to the software vendor", "A virus that takes zero days to spread", "A firewall setting"], correct: 1, difficulty: "hard" },
+            { question: "What is SQL injection?", options: ["A database backup method", "A code injection technique to attack data-driven applications", "A type of antivirus", "A network protocol"], correct: 1, difficulty: "hard" },
+            { question: "What is a man-in-the-middle attack?", options: ["A physical attack", "An attack where the attacker secretly relays communications between two parties", "A type of malware", "A password attack"], correct: 1, difficulty: "hard" },
+            { question: "What is the purpose of a honeypot in cybersecurity?", options: ["To store honey recipes", "To attract and detect attackers by mimicking vulnerable systems", "To block hackers", "To speed up networks"], correct: 1, difficulty: "hard" },
+            { question: "What is a DDoS attack?", options: ["A type of virus", "Distributed Denial of Service - overwhelming servers with traffic", "A password attack", "A phishing technique"], correct: 1, difficulty: "hard" },
+            { question: "What is cryptojacking?", options: ["Stealing cryptocurrency wallets", "Unauthorized use of someone's computer to mine cryptocurrency", "A type of encryption", "A blockchain attack"], correct: 1, difficulty: "hard" },
+            { question: "What is the difference between symmetric and asymmetric encryption?", options: ["No difference", "Symmetric uses one key, asymmetric uses a key pair", "Symmetric is faster only", "Asymmetric is older"], correct: 1, difficulty: "hard" },
+            { question: "What is a rootkit?", options: ["A gardening tool", "Malware designed to provide unauthorized root access while hiding its presence", "A type of firewall", "An antivirus program"], correct: 1, difficulty: "hard" },
+            { question: "What is the principle of least privilege?", options: ["Giving everyone admin access", "Users should have only the minimum access necessary for their job", "Removing all privileges", "A type of firewall rule"], correct: 1, difficulty: "hard" }
+        ];
+
+        let currentQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+        let currentDifficulty = '';
+        let totalQuestions = 0;
+        let userAnswers = []; // Store user answers: {questionIndex: index, selectedOption: optionIndex, isCorrect: boolean }
+        let highestReachedIndex = 0;
+
+        const difficultySelector = document.getElementById('quiz-difficulty-selector');
+        const quizCardContainer = document.getElementById('quiz-card-container');
+        const questionEl = document.getElementById('quiz-question');
+        const optionsEl = document.getElementById('quiz-options');
+        const currentQuestionEl = document.getElementById('current-question');
+        const totalQuestionsEl = document.getElementById('total-questions');
+        const quizScoreEl = document.getElementById('quiz-score');
+        const progressEl = document.getElementById('quiz-progress');
+        const feedbackEl = document.getElementById('quiz-feedback');
+        const questionContainer = document.getElementById('quiz-question-container');
+        const quizComplete = document.getElementById('quiz-complete');
+        const finalScoreEl = document.getElementById('final-score');
+        const finalTotalEl = document.getElementById('final-total');
+        const restartBtn = document.getElementById('restart-quiz');
+        const changeDifficultyBtn = document.getElementById('change-difficulty');
+        const difficultyIndicator = document.getElementById('quiz-difficulty-indicator');
+        const resultMessage = document.getElementById('quiz-result-message');
+
+        // Create navigation container
+        const navContainer = document.createElement('div');
+        navContainer.className = 'quiz-navigation';
+        navContainer.style.display = 'flex';
+        navContainer.style.justifyContent = 'space-between';
+        navContainer.style.marginTop = '20px';
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn-secondary';
+        prevBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Previous';
+        prevBtn.onclick = prevQuestion;
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn-primary';
+        nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+        nextBtn.style.padding = '14px 28px';
+        nextBtn.style.borderRadius = '12px';
+        nextBtn.style.marginLeft = 'auto'; // Push to right if alone
+        nextBtn.onclick = nextQuestion;
+
+        navContainer.appendChild(prevBtn);
+        navContainer.appendChild(nextBtn);
+
+        // Insert navigation after feedback
+        feedbackEl.parentNode.insertBefore(navContainer, feedbackEl.nextSibling);
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz(numQuestions, difficulty) {
+            currentDifficulty = difficulty;
+            totalQuestions = numQuestions;
+            currentQuizIndex = 0;
+            quizScore = 0;
+            userAnswers = new Array(numQuestions).fill(null);
+            highestReachedIndex = 0;
+            quizScoreEl.textContent = 0;
+
+            // Select questions based on difficulty
+            let selectedQuestions = [];
+            if (difficulty === 'easy') {
+                selectedQuestions = allQuizQuestions.filter(q => q.difficulty === 'easy' || q.difficulty === 'medium').slice(0, numQuestions);
+            } else if (difficulty === 'medium') {
+                selectedQuestions = shuffleArray([...allQuizQuestions]).slice(0, numQuestions);
+            } else if (difficulty === 'hard') {
+                selectedQuestions = shuffleArray([...allQuizQuestions]).slice(0, numQuestions);
+            }
+
+            currentQuestions = shuffleArray(selectedQuestions);
+            totalQuestionsEl.textContent = totalQuestions;
+            finalTotalEl.textContent = totalQuestions;
+
+            // Set difficulty indicator
+            difficultyIndicator.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            difficultyIndicator.className = 'quiz-difficulty-indicator ' + difficulty;
+
+            // Show quiz card, hide selector
+            difficultySelector.style.display = 'none';
+            quizCardContainer.style.display = 'block';
+            questionContainer.style.display = 'block';
+            quizComplete.classList.add('hidden');
+            navContainer.style.display = 'flex';
+
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            quizAnswered = false;
+            feedbackEl.classList.add('hidden');
+            const q = currentQuestions[currentQuizIndex];
+            const savedAnswer = userAnswers[currentQuizIndex];
+
+            // Update navigation buttons visibility
+            prevBtn.style.visibility = currentQuizIndex > 0 ? 'visible' : 'hidden';
+
+            // Show Next button ONLY if we are reviewing a previous question (current index < highest reached index)
+            // OR if the current question has already been answered (savedAnswer is not null)
+            if (currentQuizIndex < highestReachedIndex || savedAnswer !== null) {
+                nextBtn.style.display = 'block';
+                if (currentQuizIndex === totalQuestions - 1) {
+                    nextBtn.innerHTML = 'Finish <i class="fas fa-check"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                }
+            } else {
+                nextBtn.style.display = 'none';
+            }
+
+            questionContainer.style.opacity = 0;
+            questionContainer.style.transform = 'translateX(50px)';
+
+            setTimeout(() => {
+                questionEl.textContent = q.question;
+                optionsEl.innerHTML = '';
+
+                q.options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-option';
+                    btn.innerHTML = '<span class="option-letter">' + String.fromCharCode(65 + index) + '</span> ' + option;
+                    btn.onclick = () => selectQuizAnswer(index);
+
+                    // Restore state if answered
+                    if (savedAnswer !== null) {
+                        btn.disabled = true;
+                        if (index === q.correct) {
+                            btn.classList.add('correct');
+                        } else if (index === savedAnswer.selectedOption && index !== q.correct) {
+                            btn.classList.add('incorrect');
+                        }
+                    }
+
+                    optionsEl.appendChild(btn);
+                });
+
+                // Restore feedback if answered
+                if (savedAnswer !== null) {
+                    quizAnswered = true;
+                    if (savedAnswer.isCorrect) {
+                        feedbackEl.innerHTML = '<i class="fas fa-check-circle"></i> Correct! Well done!';
+                        feedbackEl.className = 'quiz-feedback correct';
+                    } else {
+                        feedbackEl.innerHTML = '<i class="fas fa-times-circle"></i> Incorrect. The correct answer was: ' + q.options[q.correct];
+                        feedbackEl.className = 'quiz-feedback incorrect';
+                    }
+                    feedbackEl.classList.remove('hidden');
+                }
+
+                currentQuestionEl.textContent = currentQuizIndex + 1;
+                progressEl.style.width = ((currentQuizIndex) / totalQuestions) * 100 + '%';
+
+                questionContainer.style.opacity = 1;
+                questionContainer.style.transform = 'translateX(0)';
+            }, 300);
+        }
+
+        function selectQuizAnswer(index) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const options = document.querySelectorAll('.quiz-option');
+            const correct = currentQuestions[currentQuizIndex].correct;
+            const isCorrect = index === correct;
+
+            // Save answer
+            userAnswers[currentQuizIndex] = {
+                selectedOption: index,
+                isCorrect: isCorrect
+            };
+
+            // Update score if correct
+            if (isCorrect) {
+                quizScore++;
+                quizScoreEl.textContent = quizScore;
+            }
+
+            // Update highest reached index
+            if (currentQuizIndex >= highestReachedIndex) {
+                highestReachedIndex = currentQuizIndex + 1;
+            }
+
+            options.forEach((opt, i) => {
+                opt.disabled = true;
+                if (i === correct) {
+                    opt.classList.add('correct');
+                } else if (i === index && index !== correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                feedbackEl.innerHTML = '<i class="fas fa-check-circle"></i> Correct! Well done!';
+                feedbackEl.className = 'quiz-feedback correct';
+            } else {
+                feedbackEl.innerHTML = '<i class="fas fa-times-circle"></i> Incorrect. The correct answer was: ' + currentQuestions[currentQuizIndex].options[correct];
+                feedbackEl.className = 'quiz-feedback incorrect';
+            }
+
+            feedbackEl.classList.remove('hidden');
+
+            // Auto advance after delay if it's the latest question
+            if (currentQuizIndex === highestReachedIndex - 1) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1500);
+            } else {
+                // If reviewing old questions, show next button immediately
+                nextBtn.style.display = 'block';
+                if (currentQuizIndex === totalQuestions - 1) {
+                    nextBtn.innerHTML = 'Finish <i class="fas fa-check"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                }
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuizIndex > 0) {
+                currentQuizIndex--;
+                loadQuizQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuizIndex < totalQuestions - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                showQuizComplete();
+            }
+        }
+
+        function showQuizComplete() {
+            questionContainer.style.display = 'none';
+            feedbackEl.classList.add('hidden');
+            navContainer.style.display = 'none'; // Hide navigation
+            quizComplete.classList.remove('hidden');
+            quizComplete.style.animation = 'bounceIn 0.8s ease';
+            finalScoreEl.textContent = quizScore;
+            progressEl.style.width = '100%';
+
+            // Show result message based on performance
+            const percentage = (quizScore / totalQuestions) * 100;
+            if (percentage >= 80) {
+                resultMessage.textContent = 'ðŸŽ‰ Excellent! You\'re a cybersecurity expert!';
+                resultMessage.className = 'quiz-result-message excellent';
+            } else if (percentage >= 50) {
+                resultMessage.textContent = 'ðŸ‘ Good job! Keep learning to improve!';
+                resultMessage.className = 'quiz-result-message good';
+            } else {
+                resultMessage.textContent = 'ðŸ“š Keep practicing! Cybersecurity knowledge is important!';
+                resultMessage.className = 'quiz-result-message try-again';
+            }
+        }
+
+        function restartCurrentQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            quizScoreEl.textContent = 0;
+            highestReachedIndex = 0;
+            userAnswers = new Array(totalQuestions).fill(null);
+            currentQuestions = shuffleArray([...currentQuestions]);
+            questionContainer.style.display = 'block';
+            quizComplete.classList.add('hidden');
+            loadQuizQuestion();
+        }
+
+        function showDifficultySelector() {
+            quizCardContainer.style.display = 'none';
+            difficultySelector.style.display = 'block';
+        }
+
+        function confirmExitQuiz() {
+            if (confirm("Are you sure you want to exit the quiz? Your current progress will be lost.")) {
+                exitQuiz();
+            }
+        }
+
+        function exitQuiz() {
+            difficultySelector.style.display = 'block';
+            quizCardContainer.style.display = 'none';
+            if (typeof navContainer !== 'undefined') {
+                navContainer.style.display = 'none';
+            }
+        }
+
+        restartBtn.onclick = restartCurrentQuiz;
+        changeDifficultyBtn.onclick = showDifficultySelector;
+    </script>
+
+    <%- include('partials/footer') %>

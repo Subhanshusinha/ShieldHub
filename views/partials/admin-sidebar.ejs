@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'ShieldHub Admin' %></title>
+  <link rel="stylesheet" href="/css/style.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body style="background:#0b0f19;">
+<div class="admin-layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <!-- Logo -->
+    <div class="admin-sidebar-logo">
+      <div class="admin-sidebar-logo-icon"><i class="fas fa-shield-alt"></i></div>
+      <div>
+        <div class="admin-sidebar-logo-text">ShieldHub</div>
+        <div class="admin-sidebar-logo-badge">Admin Panel</div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="admin-nav">
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Main</div>
+        <a href="/admin/dashboard" class="admin-nav-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+          <i class="fas fa-gauge-high"></i> Dashboard
+        </a>
+        <a href="/admin/articles" class="admin-nav-link <%= (typeof activePage !== 'undefined' && activePage === 'articles') ? 'active' : '' %>">
+          <i class="fas fa-newspaper"></i> Articles
+        </a>
+        <a href="/admin/quiz" class="admin-nav-link <%= (typeof activePage !== 'undefined' && activePage === 'quiz') ? 'active' : '' %>">
+          <i class="fas fa-circle-question"></i> Quiz Manager
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Account</div>
+        <a href="/admin/settings" class="admin-nav-link <%= (typeof activePage !== 'undefined' && activePage === 'settings') ? 'active' : '' %>">
+          <i class="fas fa-gear"></i> Settings
+        </a>
+        <a href="/" class="admin-nav-link" target="_blank">
+          <i class="fas fa-arrow-up-right-from-square"></i> View Site
+        </a>
+      </div>
+    </nav>
+
+    <!-- User Info -->
+    <div class="admin-sidebar-user">
+      <div class="admin-user-card">
+        <div class="admin-user-avatar"><i class="fas fa-user-shield"></i></div>
+        <div>
+          <div class="admin-user-name"><%= (typeof username !== 'undefined' && username) ? username : 'Admin' %></div>
+          <div class="admin-user-role">Administrator</div>
+        </div>
+        <a href="/admin/logout" class="admin-user-logout" title="Logout">
+          <i class="fas fa-right-from-bracket"></i>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="admin-main">

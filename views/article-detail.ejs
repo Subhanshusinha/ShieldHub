@@ -1,0 +1,417 @@
+<%- include('partials/header') %>
+
+    <section class="article-detail-section">
+        <div class="container">
+            <div class="article-detail">
+                <% if (article.image) { %>
+                    <div class="article-detail-image">
+                        <img src="<%= article.image %>" alt="<%= article.title %>">
+                    </div>
+                    <% } %>
+                        <div class="article-detail-content">
+                            <h1>
+                                <%= article.title %>
+                            </h1>
+                            <div class="article-meta-detail">
+                                <span class="article-date">
+                                    <i class="fas fa-calendar"></i>
+                                    <%= new Date(article.createdAt).toLocaleDateString() %>
+                                </span>
+                                <span class="article-likes" id="likeCount">
+                                    <i class="fas fa-heart"></i> <span id="likes">
+                                        <%= article.likes %>
+                                    </span>
+                                </span>
+                                <span class="article-comments">
+                                    <i class="fas fa-comments"></i>
+                                    <%= article.comments.length %>
+                                </span>
+                            </div>
+                            <div class="article-description-full">
+                                <p>
+                                    <%= article.description %>
+                                </p>
+                            </div>
+                            <div class="article-actions">
+                                <button onclick="likeArticle('<%= article._id %>')" class="btn-like">
+                                    <i class="fas fa-heart"></i> Like
+                                </button>
+                                <a href="<%= article.websiteUrl %>" target="_blank" class="btn-visit">
+                                    <i class="fas fa-external-link-alt"></i> Visit Website
+                                </a>
+                            </div>
+                        </div>
+            </div>
+
+            <div class="comments-section">
+                <h2>Comments</h2>
+                <form id="commentForm" class="comment-form">
+                    <div class="input-group">
+                        <input type="text" id="commentAuthor" placeholder="Your name (optional)" />
+                    </div>
+                    <div class="input-group">
+                        <textarea id="commentContent" placeholder="Write a comment..." rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Post Comment</button>
+                </form>
+
+                <div id="commentsList" class="comments-list">
+                    <% if (article.comments && article.comments.length> 0) { %>
+                        <% article.comments.forEach(comment=> { %>
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <strong>
+                                        <%= comment.author %>
+                                    </strong>
+                                    <span class="comment-date">
+                                        <%= new Date(comment.createdAt).toLocaleDateString() %>
+                                    </span>
+                                </div>
+                                <p class="comment-text">
+                                    <%= comment.content %>
+                                </p>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p class="no-comments">No comments yet. Be the first to comment!</p>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* Article Detail Section Styles */
+        .article-detail-section {
+            padding: 40px 0;
+            min-height: 80vh;
+            background: #f8fafc;
+        }
+
+        .article-detail {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .article-detail-image img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .article-detail-content {
+            padding: 40px;
+        }
+
+        .article-detail-content h1 {
+            font-size: 32px;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .article-meta-detail {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .article-meta-detail span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .article-description-full p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #4b5563;
+            white-space: pre-wrap;
+        }
+
+        .article-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-like,
+        .btn-visit {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-like {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-like:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-visit {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+        }
+
+        .btn-visit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .comments-section h2 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 25px;
+        }
+
+        .comment-form {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: #fff;
+        }
+
+        .comment-form .btn-primary {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .comment-form .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .comments-list {
+            margin-top: 30px;
+        }
+
+        .comment-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .comment-header strong {
+            color: #1a1a2e;
+            font-size: 15px;
+        }
+
+        .comment-date {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .comment-text {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .no-comments {
+            color: #94a3b8;
+            text-align: center;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        /* ========== DARK MODE STYLES ========== */
+        [data-theme="dark"] .article-detail-section {
+            background: #0f0f1a !important;
+        }
+
+        [data-theme="dark"] .article-detail {
+            background: #1a1a2e !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        [data-theme="dark"] .article-detail-content h1 {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .article-meta-detail {
+            color: #a1a1aa !important;
+        }
+
+        [data-theme="dark"] .article-meta-detail span {
+            color: #a1a1aa !important;
+        }
+
+        [data-theme="dark"] .article-description-full p {
+            color: #d4d4d8 !important;
+        }
+
+        [data-theme="dark"] .comments-section {
+            background: #1a1a2e !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        [data-theme="dark"] .comments-section h2 {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .input-group input,
+        [data-theme="dark"] .input-group textarea {
+            background: #252538 !important;
+            border-color: #2d2d44 !important;
+            color: #e4e4e7 !important;
+        }
+
+        [data-theme="dark"] .input-group input:focus,
+        [data-theme="dark"] .input-group textarea:focus {
+            background: #1a1a2e !important;
+            border-color: #6366f1 !important;
+        }
+
+        [data-theme="dark"] .input-group input::placeholder,
+        [data-theme="dark"] .input-group textarea::placeholder {
+            color: #71717a !important;
+        }
+
+        [data-theme="dark"] .comment-item {
+            background: #252538 !important;
+        }
+
+        [data-theme="dark"] .comment-header strong {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .comment-date {
+            color: #71717a !important;
+        }
+
+        [data-theme="dark"] .comment-text {
+            color: #d4d4d8 !important;
+        }
+
+        [data-theme="dark"] .no-comments {
+            color: #71717a !important;
+        }
+    </style>
+
+    <script>
+        const articleId = '<%= article._id %>';
+
+        async function likeArticle(id) {
+            try {
+                const response = await fetch(`/api/articles/${id}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('likes').textContent = data.likes;
+                }
+            } catch (error) {
+                console.error('Error liking article:', error);
+            }
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const author = document.getElementById('commentAuthor').value || 'Anonymous';
+            const content = document.getElementById('commentContent').value;
+
+            try {
+                const response = await fetch(`/api/articles/${articleId}/comment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ author, content })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const commentsList = document.getElementById('commentsList');
+                    const commentDate = new Date(data.comment.createdAt).toLocaleDateString();
+
+                    const commentHTML = `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <strong>${data.comment.author}</strong>
+                        <span class="comment-date">${commentDate}</span>
+                    </div>
+                    <p class="comment-text">${data.comment.content}</p>
+                </div>
+            `;
+
+                    if (commentsList.querySelector('.no-comments')) {
+                        commentsList.innerHTML = commentHTML;
+                    } else {
+                        commentsList.insertAdjacentHTML('beforeend', commentHTML);
+                    }
+
+                    document.getElementById('commentContent').value = '';
+                    document.getElementById('commentAuthor').value = '';
+                }
+            } catch (error) {
+                console.error('Error posting comment:', error);
+                alert('Error posting comment. Please try again.');
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

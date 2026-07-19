@@ -1,0 +1,564 @@
+<%- include('partials/header') %>
+
+<style>
+    /* Search Page specific styles matching ShieldHub's Design System */
+    .search-results-section {
+        padding: 60px 0 100px;
+        min-height: 70vh;
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 400px),
+                    radial-gradient(circle at bottom left, rgba(13, 148, 136, 0.05), transparent 400px);
+    }
+
+    .search-header-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .search-header-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--grad-primary);
+    }
+
+    .search-title-icon {
+        font-size: 3rem;
+        background: var(--grad-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+        display: inline-block;
+        filter: drop-shadow(0 4px 10px rgba(99, 102, 241, 0.15));
+    }
+
+    .search-header-card h1 {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-1);
+        margin: 0 0 10px 0;
+        letter-spacing: -0.025em;
+    }
+
+    .search-query-badge {
+        display: inline-block;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-light);
+        padding: 6px 16px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        margin-top: 10px;
+    }
+
+    /* Redirect / Loading Cyber-Scanner Styling */
+    .scanner-card {
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid var(--primary-light);
+        border-radius: var(--radius-lg);
+        padding: 50px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+        max-width: 650px;
+        margin: 20px auto;
+    }
+
+    [data-theme="dark"] .scanner-card {
+        background: rgba(25, 25, 45, 0.95);
+        border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .scanner-radar {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 2px solid var(--primary-light);
+        margin: 0 auto 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    }
+
+    .scanner-radar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: var(--accent);
+        border-bottom-color: var(--secondary);
+        animation: spin-radar 2s linear infinite;
+    }
+
+    .scanner-radar i {
+        font-size: 2.5rem;
+        color: var(--primary-light);
+        animation: pulse-icon 1.5s ease-in-out infinite;
+    }
+
+    .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--primary-light), var(--accent), var(--secondary), transparent);
+        box-shadow: 0 0 15px var(--primary-light);
+        animation: scan-vertical 3s linear infinite;
+        opacity: 0.7;
+    }
+
+    .scan-progress-container {
+        width: 100%;
+        max-width: 400px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-full);
+        margin: 20px auto;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .scan-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--grad-primary);
+        border-radius: var(--radius-full);
+        transition: width 0.1s linear;
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    .scan-text {
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
+        color: #ffffff;
+        font-weight: 700;
+        margin: 15px 0 5px;
+    }
+
+    .scan-subtext {
+        color: var(--text-2);
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .scanner-logs {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: var(--radius-sm);
+        padding: 15px;
+        font-family: monospace;
+        font-size: 0.8rem;
+        text-align: left;
+        max-height: 120px;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--success);
+        margin-bottom: 25px;
+    }
+
+    .scanner-logs p {
+        margin: 4px 0;
+        opacity: 0.85;
+    }
+
+    .scanner-logs p::before {
+        content: '>> ';
+        color: var(--accent);
+    }
+
+    /* Search Results Grid */
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .premium-article-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        transition: all var(--t-base) var(--ease-spring);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .premium-article-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--primary-light);
+        box-shadow: var(--shadow-md), 0 10px 25px rgba(99, 102, 241, 0.08);
+    }
+
+    .card-img-wrapper {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .card-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--t-slow) var(--ease);
+    }
+
+    .premium-article-card:hover .card-img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    .card-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(4px);
+        color: #ffffff;
+        padding: 5px 12px;
+        border-radius: var(--radius-full);
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .card-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-body h3 {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-1);
+        margin: 0 0 12px 0;
+        line-height: 1.4;
+        transition: color var(--t-fast) var(--ease);
+    }
+
+    .premium-article-card:hover .card-body h3 {
+        color: var(--primary);
+    }
+
+    .card-text {
+        color: var(--text-2);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .card-footer {
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .post-meta-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.8rem;
+        color: var(--text-3);
+    }
+
+    .post-meta-info span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .card-action-btn {
+        background: transparent;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        transition: gap 0.2s;
+    }
+
+    .premium-article-card:hover .card-action-btn {
+        gap: 10px;
+        color: var(--primary-dark);
+    }
+
+    /* Beautiful Empty State with Suggested Action Pills */
+    .premium-empty-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 60px 40px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .empty-icon-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+        font-size: 2.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        box-shadow: 0 10px 20px rgba(239, 68, 68, 0.05);
+    }
+
+    .premium-empty-card h3 {
+        font-family: var(--font-heading);
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text-1);
+        margin: 0 0 10px 0;
+    }
+
+    .premium-empty-card p {
+        color: var(--text-2);
+        max-width: 480px;
+        margin: 0 auto 30px;
+        line-height: 1.6;
+    }
+
+    .suggestions-header {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-3);
+        margin-bottom: 15px;
+    }
+
+    .suggestions-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .suggestion-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        color: var(--text-2);
+        padding: 8px 18px;
+        border-radius: var(--radius-full);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.25s var(--ease);
+    }
+
+    .suggestion-chip:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+    }
+
+    .suggestion-chip i {
+        font-size: 0.95rem;
+    }
+
+    /* Keyframes Animations */
+    @keyframes spin-radar {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse-icon {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    @keyframes scan-vertical {
+        0% { top: 0%; }
+        50% { top: 100%; }
+        100% { top: 0%; }
+    }
+</style>
+
+<section class="search-results-section">
+    <div class="container">
+        <!-- Main Search Statistics Header Card -->
+        <div class="search-header-card">
+            <span class="search-title-icon">
+                <i class="fas fa-search"></i>
+            </span>
+            <h1>ShieldHub Intel Search</h1>
+            <p class="search-subtitle">Scanning knowledge assets and diagnostic systems for matching criteria</p>
+            <span class="search-query-badge">
+                Query: "<%= query %>"
+            </span>
+        </div>
+
+        <% if (searchType) { %>
+            <!-- Cyber-Scanner Redirection Interface -->
+            <div class="scanner-card" id="redirectScanner">
+                <div class="scan-line"></div>
+                <div class="scanner-radar">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                
+                <h3 class="scan-text">Security Match Found!</h3>
+                <p class="scan-subtext">Redirecting to target application dashboard...</p>
+                
+                <div class="scan-progress-container">
+                    <div class="scan-progress-bar" id="scanProgress"></div>
+                </div>
+
+                <div class="scanner-logs" id="scannerLogs">
+                    <p>Initializing security diagnostic protocol...</p>
+                </div>
+
+                <a href="/<%= searchType %>" class="btn-primary" style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-external-link-alt"></i> Go to Dashboard Now
+                </a>
+            </div>
+
+            <script>
+                const logsContainer = document.getElementById('scannerLogs');
+                const progressBar = document.getElementById('scanProgress');
+                
+                const logStatements = [
+                    "Analyzing query patterns for core vector matching...",
+                    "Core match resolved: <%= searchType %> Module active",
+                    "Loading dynamic cybersecurity Sandbox...",
+                    "Resolving secure socket token...",
+                    "Handshake acknowledged. Redirecting to <%= searchType.replace('-', ' ') %> interface..."
+                ];
+
+                let currentLogIndex = 0;
+                let progressPercent = 0;
+
+                // Dynamically simulate progress and logging
+                const progressInterval = setInterval(() => {
+                    progressPercent += 2.5; // Will hit 100% in 4000ms (4 seconds total time)
+                    if (progressBar) progressBar.style.width = progressPercent + '%';
+
+                    if (progressPercent >= 100) {
+                        clearInterval(progressInterval);
+                        window.location.href = '/<%= searchType %>';
+                    }
+                }, 100);
+
+                // Print diagnostic log text lines sequentially
+                const logInterval = setInterval(() => {
+                    if (currentLogIndex < logStatements.length) {
+                        const newLog = document.createElement('p');
+                        newLog.textContent = logStatements[currentLogIndex];
+                        logsContainer.appendChild(newLog);
+                        logsContainer.scrollTop = logsContainer.scrollHeight;
+                        currentLogIndex++;
+                    } else {
+                        clearInterval(logInterval);
+                    }
+                }, 750);
+            </script>
+        <% } %>
+
+        <% if (results && results.length > 0) { %>
+            <!-- Premium Articles Layout -->
+            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin: 40px 0 20px; color: var(--text-1);">
+                <i class="fas fa-newspaper" style="color: var(--primary); margin-right: 10px;"></i> Match Cybersecurity Articles
+            </h2>
+            <div class="results-grid">
+                <% results.forEach(article => { %>
+                    <article class="premium-article-card">
+                        <% if (article.image) { %>
+                            <div class="card-img-wrapper">
+                                <img src="<%= article.image %>" alt="<%= article.title %>">
+                                <span class="card-badge">Article</span>
+                            </div>
+                        <% } %>
+                        <div class="card-body">
+                            <h3><%= article.title %></h3>
+                            <p class="card-text">
+                                <%= article.description.substring(0, 140) %><%= article.description.length > 140 ? '...' : '' %>
+                            </p>
+                            <div class="card-footer">
+                                <div class="post-meta-info">
+                                    <span>
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <%= new Date(article.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}) %>
+                                    </span>
+                                </div>
+                                <a href="/articles/<%= article._id %>" class="card-action-btn">
+                                    Read Intel <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+        <% } else if (query && !searchType) { %>
+            <!-- Premium Empty/Help State with Smart Recommendations -->
+            <div class="premium-empty-card">
+                <div class="empty-icon-circle">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>No Database Matches Found</h3>
+                <p>We couldn't locate specific diagnostic modules or articles matching "<%= query %>". Try launching one of our core security tools below.</p>
+                
+                <h4 class="suggestions-header">Quick Launch Diagnostics</h4>
+                <div class="suggestions-container">
+                    <a href="/phishing-detective" class="suggestion-chip">
+                        <i class="fas fa-user-secret" style="color: #ec4899;"></i> Phishing Detective
+                    </a>
+                    <a href="/vulnerability-scanner" class="suggestion-chip">
+                        <i class="fas fa-search" style="color: #3b82f6;"></i> Vulnerability Scanner
+                    </a>
+                    <a href="/password-strength" class="suggestion-chip">
+                        <i class="fas fa-key" style="color: #10b981;"></i> Password Checker
+                    </a>
+                    <a href="/steganography" class="suggestion-chip">
+                        <i class="fas fa-mask" style="color: #8b5cf6;"></i> Steganography
+                    </a>
+                    <a href="/cybersecurity-article" class="suggestion-chip">
+                        <i class="fas fa-newspaper" style="color: #f59e0b;"></i> Security Articles
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('partials/footer') %>

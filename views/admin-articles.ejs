@@ -1,0 +1,262 @@
+<%- include('partials/admin-sidebar', { activePage: 'articles', username: username || '' }) %>
+
+    <!-- TOPBAR -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <div class="admin-page-title"><i class="fas fa-newspaper" style="color:#10b981;margin-right:10px;"></i>Articles</div>
+        <div class="admin-breadcrumb">Admin / <span>Manage Articles</span></div>
+      </div>
+      <div class="admin-topbar-right">
+        <button class="admin-btn admin-btn-success" onclick="openAddModal()">
+          <i class="fas fa-plus"></i> Add Article
+        </button>
+        <button class="admin-hamburger" id="adminHamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+      <!-- Alerts -->
+      <% if (success) { %>
+        <div class="admin-alert admin-alert-success"><i class="fas fa-circle-check"></i> <%= success %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="admin-alert admin-alert-danger"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+      <% } %>
+
+      <!-- Articles Panel -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-newspaper"></i> All Articles <span style="background:rgba(16,185,129,0.15);color:#34d399;padding:2px 10px;border-radius:20px;font-size:13px;margin-left:8px;font-weight:600;"><%= articles.length %></span></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="articleSearch" placeholder="Search articles..." style="padding:8px 14px;background:rgba(26,26,56,0.8);border:1px solid rgba(99,102,241,0.2);border-radius:8px;color:#e2e8f0;font-size:13px;outline:none;width:200px;" oninput="filterArticles(this.value)">
+          </div>
+        </div>
+
+        <% if (articles.length === 0) { %>
+          <div class="empty-state">
+            <div class="empty-state-icon"><i class="fas fa-newspaper"></i></div>
+            <div class="empty-state-title">No Articles Yet</div>
+            <div class="empty-state-desc">Click "Add Article" to publish your first cybersecurity article.</div>
+          </div>
+        <% } else { %>
+        <div style="overflow-x:auto;">
+          <table class="admin-table" id="articlesTable">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% articles.forEach(function(article){ %>
+              <tr data-title="<%= article.title.toLowerCase() %>" data-desc="<%= article.description ? article.description.toLowerCase() : '' %>">
+                <td>
+                  <% if (article.image) { %>
+                    <div class="img-preview-wrap">
+                      <img src="<%= article.image %>" alt="" onerror="this.style.display='none'">
+                    </div>
+                  <% } else { %>
+                    <div style="width:80px;height:60px;background:rgba(99,102,241,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#334155;font-size:22px;">
+                      <i class="fas fa-image"></i>
+                    </div>
+                  <% } %>
+                </td>
+                <td class="col-title" style="max-width:220px;">
+                  <div style="font-weight:600;color:#e2e8f0;font-size:14px;margin-bottom:3px;"><%= article.title.length > 55 ? article.title.substring(0,55) + '...' : article.title %></div>
+                  <% if (article.description) { %>
+                    <div style="font-size:12px;color:#334155;"><%= article.description.substring(0,60) %>...</div>
+                  <% } %>
+                </td>
+                <td>
+                  <% 
+                    const catColors = {breach:'badge-danger',malware:'badge-warning',phishing:'badge-danger',privacy:'badge-primary',general:'badge-cyan'};
+                    const cat = article.category || 'general';
+                    const catClass = catColors[cat] || 'badge-primary';
+                  %>
+                  <span class="badge <%= catClass %>"><%= cat %></span>
+                </td>
+                <td style="font-size:12px;white-space:nowrap;">
+                  <%= new Date(article.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) %>
+                </td>
+                <td style="text-align:right;">
+                  <div style="display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;">
+                    <% if (article.websiteUrl) { %>
+                      <a href="<%= article.websiteUrl %>" target="_blank" class="admin-btn admin-btn-ghost" style="padding:6px 12px;font-size:12px;" title="View Article">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                      </a>
+                    <% } %>
+                    <button class="admin-btn admin-btn-warning" style="padding:6px 12px;font-size:12px;" onclick='openEditModal(<%- JSON.stringify(article) %>)' title="Edit">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="admin-btn admin-btn-danger" style="padding:6px 12px;font-size:12px;" onclick="confirmDelete('<%= article._id %>', '<%= article.title.replace(/'/g, `\\'`) %>')" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD MODAL ===== -->
+<div class="admin-modal-backdrop" id="addModal">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title"><i class="fas fa-plus-circle"></i> Add New Article</div>
+      <button class="admin-modal-close" onclick="closeModal('addModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/admin/articles/add" enctype="multipart/form-data">
+      <div class="admin-modal-body">
+        <div class="form-group">
+          <label class="admin-form-label">Article Title *</label>
+          <input type="text" name="title" class="admin-form-input" placeholder="Enter article title..." required>
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Description</label>
+          <textarea name="description" class="admin-form-input" rows="3" placeholder="Brief description..."></textarea>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="admin-form-label">Category</label>
+            <select name="category" class="admin-form-input">
+              <option value="breach">Breach</option>
+              <option value="malware">Malware</option>
+              <option value="phishing">Phishing</option>
+              <option value="privacy">Privacy</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Website URL</label>
+            <input type="url" name="websiteUrl" class="admin-form-input" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Image URL</label>
+          <input type="url" name="imageUrl" class="admin-form-input" placeholder="https://example.com/image.jpg">
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Or Upload Image</label>
+          <input type="file" name="image" class="admin-form-input" accept="image/*" style="padding:10px;">
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-ghost" onclick="closeModal('addModal')">Cancel</button>
+        <button type="submit" class="admin-btn admin-btn-success"><i class="fas fa-plus"></i> Add Article</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== EDIT MODAL ===== -->
+<div class="admin-modal-backdrop" id="editModal">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title"><i class="fas fa-pen"></i> Edit Article</div>
+      <button class="admin-modal-close" onclick="closeModal('editModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" id="editForm" enctype="multipart/form-data">
+      <div class="admin-modal-body">
+        <div class="form-group">
+          <label class="admin-form-label">Article Title *</label>
+          <input type="text" name="title" id="editTitle" class="admin-form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Description</label>
+          <textarea name="description" id="editDesc" class="admin-form-input" rows="3"></textarea>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="admin-form-label">Category</label>
+            <select name="category" id="editCat" class="admin-form-input">
+              <option value="breach">Breach</option>
+              <option value="malware">Malware</option>
+              <option value="phishing">Phishing</option>
+              <option value="privacy">Privacy</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Website URL</label>
+            <input type="url" name="websiteUrl" id="editUrl" class="admin-form-input" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Image URL</label>
+          <input type="url" name="imageUrl" id="editImgUrl" class="admin-form-input" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="admin-form-label">Or Upload New Image</label>
+          <input type="file" name="image" class="admin-form-input" accept="image/*" style="padding:10px;">
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-ghost" onclick="closeModal('editModal')">Cancel</button>
+        <button type="submit" class="admin-btn admin-btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== DELETE CONFIRM MODAL ===== -->
+<div class="admin-modal-backdrop" id="deleteModal">
+  <div class="admin-modal" style="max-width:400px;">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title" style="color:#f87171;"><i class="fas fa-trash"></i> Confirm Delete</div>
+      <button class="admin-modal-close" onclick="closeModal('deleteModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p style="color:#94a3b8;font-size:15px;line-height:1.6;">Are you sure you want to delete <strong id="deleteArticleName" style="color:#f1f5f9;"></strong>? This action cannot be undone.</p>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+      <form method="POST" id="deleteForm" style="margin:0;">
+        <button type="submit" class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+  document.querySelectorAll('.admin-modal-backdrop').forEach(m => m.addEventListener('click', function(e){ if(e.target===this) closeModal(this.id); }));
+  function openAddModal(){ openModal('addModal'); }
+  function openEditModal(article){
+    document.getElementById('editForm').action = '/admin/articles/edit/' + article._id;
+    document.getElementById('editTitle').value = article.title || '';
+    document.getElementById('editDesc').value = article.description || '';
+    document.getElementById('editUrl').value = article.websiteUrl || '';
+    document.getElementById('editImgUrl').value = article.image && article.image.startsWith('http') ? article.image : '';
+    const catSel = document.getElementById('editCat');
+    for(let o of catSel.options){ if(o.value === article.category) o.selected = true; }
+    openModal('editModal');
+  }
+  function confirmDelete(id, title){
+    document.getElementById('deleteForm').action = '/admin/articles/delete/' + id;
+    document.getElementById('deleteArticleName').textContent = '"' + title + '"';
+    openModal('deleteModal');
+  }
+  function filterArticles(q){
+    q = q.toLowerCase();
+    document.querySelectorAll('#articlesTable tbody tr').forEach(row => {
+      const title = row.dataset.title || '';
+      const desc  = row.dataset.desc  || '';
+      row.style.display = (title.includes(q) || desc.includes(q)) ? '' : 'none';
+    });
+  }
+  // Mobile sidebar
+  const adminHamburger = document.getElementById('adminHamburger');
+  const adminSidebar = document.getElementById('adminSidebar');
+  adminHamburger && adminHamburger.addEventListener('click', ()=> adminSidebar.classList.toggle('open'));
+</script>

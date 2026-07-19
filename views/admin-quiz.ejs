@@ -1,0 +1,179 @@
+<%- include('partials/admin-sidebar', { activePage: 'quiz', username: username || '' }) %>
+
+    <!-- TOPBAR -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <div class="admin-page-title"><i class="fas fa-circle-question" style="color:#f59e0b;margin-right:10px;"></i>Quiz Manager</div>
+        <div class="admin-breadcrumb">Admin / <span>Manage Quiz</span></div>
+      </div>
+      <div class="admin-topbar-right">
+        <button class="admin-btn admin-btn-primary" onclick="openModal('addQuizModal')">
+          <i class="fas fa-plus"></i> Add Question
+        </button>
+        <button class="admin-hamburger" id="adminHamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+      <% if (success) { %>
+        <div class="admin-alert admin-alert-success"><i class="fas fa-circle-check"></i> <%= success %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="admin-alert admin-alert-danger"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+      <% } %>
+
+      <!-- Resource Link Panel -->
+      <div class="admin-panel" style="margin-bottom:24px;">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-link"></i> Cyber Hero Resource Link</div>
+          <span class="badge badge-cyan">Shown on Home Page</span>
+        </div>
+        <div class="admin-panel-body">
+          <form method="POST" action="/admin/quiz/resource">
+            <div class="admin-form-grid">
+              <div class="form-group">
+                <label class="admin-form-label">Resource Title</label>
+                <input type="text" name="title" class="admin-form-input" value="<%= resource && resource.title ? resource.title : '' %>" placeholder="e.g. Become a Cyber Hero" required>
+              </div>
+              <div class="form-group">
+                <label class="admin-form-label">Resource URL</label>
+                <input type="url" name="url" class="admin-form-input" value="<%= resource && resource.url ? resource.url : '' %>" placeholder="https://..." required>
+              </div>
+              <div class="form-group full-width">
+                <label class="admin-form-label">Description</label>
+                <textarea name="description" class="admin-form-input" rows="2" placeholder="Brief description..."><%= resource && resource.description ? resource.description : '' %></textarea>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="submit" class="admin-btn admin-btn-primary"><i class="fas fa-save"></i> Update Resource</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Questions Panel -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title">
+            <i class="fas fa-circle-question"></i> Questions
+            <span style="background:rgba(245,158,11,0.15);color:#fbbf24;padding:2px 10px;border-radius:20px;font-size:13px;margin-left:8px;font-weight:600;"><%= questions.length %></span>
+          </div>
+          <input type="text" placeholder="Search questions..." id="questionSearch" style="padding:8px 14px;background:rgba(26,26,56,0.8);border:1px solid rgba(99,102,241,0.2);border-radius:8px;color:#e2e8f0;font-size:13px;outline:none;width:200px;" oninput="filterQuestions(this.value)">
+        </div>
+        <div class="admin-panel-body" id="questionsList">
+          <% if (questions.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="fas fa-circle-question"></i></div>
+              <div class="empty-state-title">No Questions Yet</div>
+              <div class="empty-state-desc">Click "Add Question" to create your first quiz question.</div>
+            </div>
+          <% } else { %>
+            <% questions.forEach(function(q, idx){ %>
+            <div class="quiz-question-card" data-text="<%= q.question.toLowerCase() %>">
+              <div class="quiz-question-header">
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="background:rgba(99,102,241,0.15);color:#818cf8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">#<%= idx+1 %></span>
+                    <span class="badge diff-<%= q.difficulty || 'easy' %>"><%= q.difficulty || 'easy' %></span>
+                  </div>
+                  <div class="quiz-question-text"><%= q.question %></div>
+                </div>
+                <form method="POST" action="/admin/quiz/delete/<%= q._id %>" style="margin:0;flex-shrink:0;">
+                  <button type="submit" class="admin-btn admin-btn-danger" style="padding:6px 10px;font-size:12px;" onclick="return confirm('Delete this question?')" title="Delete Question">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              </div>
+              <div class="quiz-options-preview">
+                <% q.options.forEach(function(opt, oi){ %>
+                  <div class="quiz-opt-preview <%= oi === q.correctAnswer ? 'correct' : '' %>">
+                    <% if(oi === q.correctAnswer) { %><i class="fas fa-check" style="margin-right:4px;"></i><% } %>
+                    <%= opt %>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD QUESTION MODAL ===== -->
+<div class="admin-modal-backdrop" id="addQuizModal">
+  <div class="admin-modal" style="max-width:600px;">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title"><i class="fas fa-plus-circle"></i> Add Quiz Question</div>
+      <button class="admin-modal-close" onclick="closeModal('addQuizModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/admin/quiz/add">
+      <div class="admin-modal-body">
+        <div class="form-group">
+          <label class="admin-form-label">Question *</label>
+          <textarea name="question" class="admin-form-input" rows="3" placeholder="Enter the quiz question..." required></textarea>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="admin-form-label">Option A *</label>
+            <input type="text" name="option1" class="admin-form-input" placeholder="Option A" required>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Option B *</label>
+            <input type="text" name="option2" class="admin-form-input" placeholder="Option B" required>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Option C *</label>
+            <input type="text" name="option3" class="admin-form-input" placeholder="Option C" required>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Option D *</label>
+            <input type="text" name="option4" class="admin-form-input" placeholder="Option D" required>
+          </div>
+        </div>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label class="admin-form-label">Correct Answer *</label>
+            <select name="correctAnswer" class="admin-form-input" required>
+              <option value="0">A — Option 1</option>
+              <option value="1">B — Option 2</option>
+              <option value="2">C — Option 3</option>
+              <option value="3">D — Option 4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="admin-form-label">Difficulty</label>
+            <select name="difficulty" class="admin-form-input">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-ghost" onclick="closeModal('addQuizModal')">Cancel</button>
+        <button type="submit" class="admin-btn admin-btn-success"><i class="fas fa-plus"></i> Add Question</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+  document.querySelectorAll('.admin-modal-backdrop').forEach(m => m.addEventListener('click', function(e){ if(e.target===this) closeModal(this.id); }));
+
+  function filterQuestions(q){
+    q = q.toLowerCase();
+    document.querySelectorAll('.quiz-question-card').forEach(card => {
+      card.style.display = (card.dataset.text || '').includes(q) ? '' : 'none';
+    });
+  }
+
+  const adminHamburger = document.getElementById('adminHamburger');
+  const adminSidebar = document.getElementById('adminSidebar');
+  adminHamburger && adminHamburger.addEventListener('click', ()=> adminSidebar.classList.toggle('open'));
+</script>

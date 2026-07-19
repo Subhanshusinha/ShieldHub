@@ -1,0 +1,163 @@
+<%- include('partials/admin-sidebar', { activePage: 'dashboard', username: username }) %>
+
+    <!-- TOPBAR -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <div class="admin-page-title"><i class="fas fa-gauge-high" style="color:#6366f1;margin-right:10px;"></i>Dashboard</div>
+        <div class="admin-breadcrumb">Admin / <span>Dashboard</span></div>
+      </div>
+      <div class="admin-topbar-right">
+        <div style="font-size:13px;color:#475569;" id="adminClock"></div>
+        <a href="/admin/logout" class="admin-btn admin-btn-danger" style="padding:8px 16px;font-size:13px;">
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+        <button class="admin-hamburger" id="adminHamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+      <!-- Welcome Banner -->
+      <div style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));border:1px solid rgba(99,102,241,0.2);border-radius:16px;padding:28px 32px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div style="font-size:13px;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
+            <i class="fas fa-sun"></i> Welcome back
+          </div>
+          <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;color:#f1f5f9;">
+            Hello, <span style="background:linear-gradient(135deg,#818cf8,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"><%= username %></span> 👋
+          </div>
+          <div style="font-size:14px;color:#475569;margin-top:4px;">Your ShieldHub admin panel is ready. All systems operational.</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="/" target="_blank" class="admin-btn admin-btn-ghost"><i class="fas fa-arrow-up-right-from-square"></i> View Site</a>
+          <a href="/admin/articles" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> Add Article</a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card articles">
+          <div class="admin-stat-icon"><i class="fas fa-newspaper"></i></div>
+          <div class="admin-stat-num" id="statArticles">0</div>
+          <div class="admin-stat-label">Total Articles</div>
+          <i class="fas fa-newspaper admin-stat-bg-icon"></i>
+        </div>
+        <div class="admin-stat-card quiz">
+          <div class="admin-stat-icon"><i class="fas fa-circle-question"></i></div>
+          <div class="admin-stat-num" id="statQuiz">0</div>
+          <div class="admin-stat-label">Quiz Questions</div>
+          <i class="fas fa-circle-question admin-stat-bg-icon"></i>
+        </div>
+        <div class="admin-stat-card users">
+          <div class="admin-stat-icon"><i class="fas fa-user-shield"></i></div>
+          <div class="admin-stat-num">1</div>
+          <div class="admin-stat-label">Admin User</div>
+          <i class="fas fa-user-shield admin-stat-bg-icon"></i>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+        </div>
+        <div class="admin-panel-body">
+          <div class="quick-actions-grid">
+            <a href="/admin/articles" class="quick-action-card qa-articles">
+              <div class="quick-action-icon"><i class="fas fa-newspaper"></i></div>
+              <div class="quick-action-text">
+                <div class="quick-action-title">Manage Articles</div>
+                <div class="quick-action-sub">Add, edit or delete articles</div>
+              </div>
+              <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+            <a href="/admin/quiz" class="quick-action-card qa-quiz">
+              <div class="quick-action-icon"><i class="fas fa-circle-question"></i></div>
+              <div class="quick-action-text">
+                <div class="quick-action-title">Manage Quiz</div>
+                <div class="quick-action-sub">Add or remove quiz questions</div>
+              </div>
+              <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+            <a href="/admin/settings" class="quick-action-card qa-settings">
+              <div class="quick-action-icon"><i class="fas fa-gear"></i></div>
+              <div class="quick-action-text">
+                <div class="quick-action-title">Account Settings</div>
+                <div class="quick-action-sub">Change password &amp; username</div>
+              </div>
+              <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+            <a href="/" target="_blank" class="quick-action-card qa-view">
+              <div class="quick-action-icon"><i class="fas fa-globe"></i></div>
+              <div class="quick-action-text">
+                <div class="quick-action-title">View Live Site</div>
+                <div class="quick-action-sub">Open ShieldHub in new tab</div>
+              </div>
+              <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-circle-info"></i> System Info</div>
+          <span class="badge badge-success" style="font-size:11px;"><i class="fas fa-circle" style="font-size:8px;"></i> All Systems Operational</span>
+        </div>
+        <div class="admin-panel-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+            <div style="padding:16px;background:rgba(6,6,18,0.6);border:1px solid rgba(99,102,241,0.12);border-radius:10px;">
+              <div style="font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Database</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#34d399;font-weight:600;">
+                <i class="fas fa-database"></i> MongoDB Atlas
+                <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+              </div>
+            </div>
+            <div style="padding:16px;background:rgba(6,6,18,0.6);border:1px solid rgba(99,102,241,0.12);border-radius:10px;">
+              <div style="font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Server</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#34d399;font-weight:600;">
+                <i class="fab fa-node-js"></i> Node.js / Express
+                <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+              </div>
+            </div>
+            <div style="padding:16px;background:rgba(6,6,18,0.6);border:1px solid rgba(99,102,241,0.12);border-radius:10px;">
+              <div style="font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Security</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#34d399;font-weight:600;">
+                <i class="fas fa-shield-halved"></i> Session + Bcrypt
+                <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end admin-main -->
+</div><!-- end admin-layout -->
+
+<script>
+  // Live clock
+  function updateClock(){
+    const now = new Date();
+    document.getElementById('adminClock').textContent = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  updateClock(); setInterval(updateClock,1000);
+
+  // Count-up animation
+  function countUp(el, target, duration){
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(()=>{
+      start += step;
+      if(start >= target){ el.textContent = target; clearInterval(timer); return; }
+      el.textContent = Math.floor(start);
+    }, 16);
+  }
+  countUp(document.getElementById('statArticles'), <%= stats.articles %>, 1000);
+  countUp(document.getElementById('statQuiz'), <%= stats.quizQuestions %>, 1000);
+
+  // Mobile sidebar
+  const adminHamburger = document.getElementById('adminHamburger');
+  const adminSidebar = document.getElementById('adminSidebar');
+  adminHamburger && adminHamburger.addEventListener('click', ()=> adminSidebar.classList.toggle('open'));
+</script>

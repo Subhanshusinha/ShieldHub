@@ -1,0 +1,715 @@
+<%- include('partials/header') %>
+
+    <section class="phishing-hero">
+        <div class="hero-background">
+            <div class="floating-icons">
+                <i class="fas fa-shield-alt icon-1"></i>
+                <i class="fas fa-fish icon-2"></i>
+                <i class="fas fa-bug icon-3"></i>
+                <i class="fas fa-lock icon-4"></i>
+                <i class="fas fa-exclamation-triangle icon-5"></i>
+            </div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-user-secret"></i>
+                    <span>AI-Powered Detection</span>
+                </div>
+                <h1>Phishing <span class="gradient-text">Detective</span></h1>
+                <p>Analyze suspicious emails and URLs to detect phishing attempts before they harm you</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="detection-section">
+        <div class="container">
+            <div class="detection-grid">
+                <!-- Main Detection Card -->
+                <div class="detection-card main-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div>
+                            <h2>Analyze Suspicious Content</h2>
+                            <p>Paste email text, URL, or message to detect phishing</p>
+                        </div>
+                    </div>
+
+                    <form id="phishingForm" class="detection-form">
+                        <div class="input-type-selector">
+                            <button type="button" class="type-btn active" data-type="url" onclick="selectType('url')">
+                                <i class="fas fa-link"></i> URL
+                            </button>
+                            <button type="button" class="type-btn" data-type="email" onclick="selectType('email')">
+                                <i class="fas fa-envelope"></i> Email
+                            </button>
+                            <button type="button" class="type-btn" data-type="message" onclick="selectType('message')">
+                                <i class="fas fa-comment-alt"></i> Message
+                            </button>
+                        </div>
+
+                        <div class="textarea-wrapper">
+                            <textarea id="phishingInput"
+                                placeholder="Paste suspicious URL, email content, or message here..." rows="6"
+                                required></textarea>
+                            <div class="textarea-footer">
+                                <span id="charCount">0 characters</span>
+                                <button type="button" class="clear-btn" onclick="clearInput()">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-analyze" id="analyzeBtn">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <span>Analyze Now</span>
+                            <div class="btn-loader" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </button>
+                    </form>
+
+                    <!-- Result Section -->
+                    <div id="phishingResult" class="result-section" style="display: none;">
+                        <div class="result-header">
+                            <h3><i class="fas fa-clipboard-check"></i> Analysis Result</h3>
+                        </div>
+                        <div id="resultContent"></div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="info-cards">
+                    <div class="info-card red-card">
+                        <div class="info-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>High Risk Signs</h3>
+                        <ul>
+                            <li>Urgent action required</li>
+                            <li>Suspicious sender address</li>
+                            <li>Misspelled URLs</li>
+                            <li>Request for personal info</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card green-card">
+                        <div class="info-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Safe Practices</h3>
+                        <ul>
+                            <li>Verify sender identity</li>
+                            <li>Check URL before clicking</li>
+                            <li>Don't share passwords</li>
+                            <li>Enable 2FA everywhere</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card stats-card">
+                        <h3><i class="fas fa-chart-bar"></i> Quick Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-value">3.4B</span>
+                                <span class="stat-label">Phishing emails/day</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">36%</span>
+                                <span class="stat-label">Breaches from phishing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* Hero Section */
+        .phishing-hero {
+            position: relative;
+            padding: 80px 0 60px;
+            background: var(--grad-hero);
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .floating-icons i {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 40px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .icon-1 { top: 15%; left: 10%; animation-delay: 0s; }
+        .icon-2 { top: 25%; right: 15%; animation-delay: 1s; font-size: 50px; }
+        .icon-3 { bottom: 30%; left: 20%; animation-delay: 2s; }
+        .icon-4 { top: 40%; right: 25%; animation-delay: 3s; }
+        .icon-5 { bottom: 20%; right: 10%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(79, 70, 229, 0.15);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            padding: 8px 18px;
+            border-radius: 50px;
+            color: var(--primary-light);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .hero-badge i {
+            font-size: 14px;
+        }
+
+        .phishing-hero h1 {
+            font-size: 48px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .gradient-text {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .phishing-hero p {
+            color: var(--text-3);
+            font-size: 18px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Detection Section */
+        .detection-section {
+            padding: 60px 0;
+            background: var(--bg);
+        }
+
+        .detection-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Main Detection Card */
+        .detection-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--grad-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-icon i {
+            font-size: 26px;
+            color: #fff;
+        }
+
+        .card-header h2 {
+            font-size: 22px;
+            color: var(--text-1);
+            margin: 0 0 5px;
+        }
+
+        .card-header p {
+            color: var(--text-3);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Input Type Selector */
+        .input-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-elevated);
+            padding: 8px;
+            border-radius: 14px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .type-btn:hover {
+            color: var(--primary);
+        }
+
+        .type-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Textarea */
+        .textarea-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .textarea-wrapper textarea {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+            color: var(--text-1);
+            min-height: 150px;
+        }
+
+        .textarea-wrapper textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .textarea-wrapper textarea::placeholder {
+            color: var(--text-3);
+        }
+
+        .textarea-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding: 0 5px;
+        }
+
+        #charCount {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-3);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .clear-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Analyze Button */
+        .btn-analyze {
+            width: 100%;
+            padding: 18px;
+            background: var(--grad-primary);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .result-header {
+            margin-bottom: 20px;
+        }
+
+        .result-header h3 {
+            font-size: 18px;
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-header h3 i {
+            color: var(--primary);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-badge i {
+            font-size: 22px;
+        }
+
+        .status-safe {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-info {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--primary-light);
+        }
+
+        /* Risk Meter */
+        .risk-meter {
+            background: var(--bg-elevated);
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+
+        .risk-label {
+            font-weight: 600;
+            color: var(--text-1);
+            margin-bottom: 10px;
+        }
+
+        .risk-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        /* Detected Patterns */
+        .detected-patterns {
+            background: rgba(239, 68, 68, 0.08);
+            padding: 18px;
+            border-radius: 14px;
+            border-left: 4px solid var(--danger);
+        }
+
+        .detected-patterns h4 {
+            color: var(--danger);
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .detected-patterns ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .detected-patterns li {
+            color: var(--text-2);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        /* Info Cards */
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            padding: 24px;
+            border-radius: 20px;
+            color: #fff;
+        }
+
+        .info-card h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .red-card {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+        }
+
+        .green-card {
+            background: var(--grad-secondary);
+        }
+
+        .stats-card {
+            background: var(--grad-primary);
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .info-icon i {
+            font-size: 20px;
+        }
+
+        .info-card ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-card li {
+            margin-bottom: 8px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .detection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-cards {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .info-card {
+                flex: 1;
+                min-width: 280px;
+            }
+
+            .phishing-hero h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+
+    <script>
+        // Type selection
+        function selectType(type) {
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.type-btn[data-type="${type}"]`).classList.add('active');
+
+            const placeholders = {
+                url: 'Paste suspicious URL here (e.g., https://suspicious-site.com/login)...',
+                email: 'Paste the full email content including headers if available...',
+                message: 'Paste suspicious SMS, WhatsApp, or social media message...'
+            };
+
+            document.getElementById('phishingInput').placeholder = placeholders[type];
+        }
+
+        // Character counter
+        document.getElementById('phishingInput').addEventListener('input', function () {
+            document.getElementById('charCount').textContent = this.value.length + ' characters';
+        });
+
+        // Clear input
+        function clearInput() {
+            document.getElementById('phishingInput').value = '';
+            document.getElementById('charCount').textContent = '0 characters';
+            document.getElementById('phishingResult').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('phishingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('phishingInput').value;
+            const resultDiv = document.getElementById('phishingResult');
+            const resultContent = document.getElementById('resultContent');
+            const btn = document.getElementById('analyzeBtn');
+
+            // Show loading
+            btn.querySelector('span').style.display = 'none';
+            btn.querySelector('.btn-loader').style.display = 'block';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/phishing/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: input, url: input })
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                btn.querySelector('span').style.display = 'inline';
+                btn.querySelector('.btn-loader').style.display = 'none';
+
+                if (data.success) {
+                    let statusClass = 'status-safe';
+                    let icon = 'check-circle';
+
+                    if (data.status === 'high-risk') {
+                        statusClass = 'status-danger';
+                        icon = 'exclamation-triangle';
+                    } else if (data.status === 'medium-risk') {
+                        statusClass = 'status-warning';
+                        icon = 'exclamation-circle';
+                    } else if (data.status === 'low-risk') {
+                        statusClass = 'status-info';
+                        icon = 'info-circle';
+                    }
+
+                    let riskColor = '#10b981';
+                    if (data.riskScore >= 70) riskColor = '#ef4444';
+                    else if (data.riskScore >= 40) riskColor = '#f59e0b';
+                    else if (data.riskScore >= 20) riskColor = '#3b82f6';
+
+                    resultContent.innerHTML = `
+                <div class="status-badge ${statusClass}">
+                    <i class="fas fa-${icon}"></i>
+                    <span>${data.message}</span>
+                </div>
+                <div class="risk-meter">
+                    <div class="risk-label">Risk Score: ${data.riskScore}%</div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: ${data.riskScore}%; background: ${riskColor}"></div>
+                    </div>
+                </div>
+                ${data.detectedPatterns && data.detectedPatterns.length > 0 ? `
+                    <div class="detected-patterns">
+                        <h4><i class="fas fa-bug"></i> Detected Warning Signs:</h4>
+                        <ul>
+                            ${data.detectedPatterns.map(pattern => `<li>${pattern}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+            `;
+                    resultDiv.style.display = 'block';
+                } else {
+                    resultContent.innerHTML = `<div class="status-badge status-danger"><i class="fas fa-times-circle"></i>${data.message}</div>`;
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                btn.querySelector('span').style.display = 'inline';
+                btn.querySelector('.btn-loader').style.display = 'none';
+                resultContent.innerHTML = '<div class="status-badge status-danger"><i class="fas fa-times-circle"></i>Error analyzing. Please try again.</div>';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

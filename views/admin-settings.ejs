@@ -1,0 +1,175 @@
+<%- include('partials/admin-sidebar', { activePage: 'settings', username: username || '' }) %>
+
+    <!-- TOPBAR -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <div class="admin-page-title"><i class="fas fa-gear" style="color:#818cf8;margin-right:10px;"></i>Settings</div>
+        <div class="admin-breadcrumb">Admin / <span>Account Settings</span></div>
+      </div>
+      <div class="admin-topbar-right">
+        <button class="admin-hamburger" id="adminHamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+      <% if (success) { %>
+        <div class="admin-alert admin-alert-success"><i class="fas fa-circle-check"></i> <%= success %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="admin-alert admin-alert-danger"><i class="fas fa-triangle-exclamation"></i> <%= error %></div>
+      <% } %>
+
+      <!-- Account Card -->
+      <div class="admin-panel" style="margin-bottom:24px;">
+        <div class="admin-panel-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+          <div style="width:70px;height:70px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 8px 24px rgba(99,102,241,0.4);flex-shrink:0;">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#f1f5f9;"><%= username %></div>
+            <div style="font-size:13px;color:#475569;margin-top:3px;"><i class="fas fa-circle" style="color:#10b981;font-size:8px;margin-right:6px;"></i>Administrator Account — Active</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="badge badge-success"><i class="fas fa-shield-check"></i> Verified Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-sliders"></i> Account Settings</div>
+        </div>
+        <div class="admin-panel-body">
+          <!-- Tabs -->
+          <div class="settings-tabs">
+            <button class="settings-tab-btn active" onclick="switchTab('username', this)">
+              <i class="fas fa-user"></i> Change Username
+            </button>
+            <button class="settings-tab-btn" onclick="switchTab('password', this)">
+              <i class="fas fa-lock"></i> Change Password
+            </button>
+          </div>
+
+          <!-- Username Tab -->
+          <div class="settings-tab-panel active" id="tab-username">
+            <div style="max-width:480px;">
+              <div style="padding:16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);border-radius:10px;margin-bottom:24px;font-size:14px;color:#94a3b8;line-height:1.6;">
+                <i class="fas fa-circle-info" style="color:#818cf8;margin-right:8px;"></i>
+                Changing your username requires your current password for verification.
+              </div>
+              <form method="POST" action="/admin/change-username">
+                <div class="form-group">
+                  <label class="admin-form-label">New Username</label>
+                  <input type="text" name="newUsername" class="admin-form-input" placeholder="Enter new username (min 3 chars)" minlength="3" required>
+                </div>
+                <div class="form-group">
+                  <label class="admin-form-label">Current Password (to confirm)</label>
+                  <input type="password" name="password" class="admin-form-input" placeholder="Enter current password to confirm" required>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary">
+                  <i class="fas fa-user-pen"></i> Update Username
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Password Tab -->
+          <div class="settings-tab-panel" id="tab-password">
+            <div style="max-width:480px;">
+              <div style="padding:16px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);border-radius:10px;margin-bottom:24px;font-size:14px;color:#94a3b8;line-height:1.6;">
+                <i class="fas fa-triangle-exclamation" style="color:#fbbf24;margin-right:8px;"></i>
+                Choose a strong password with at least 8 characters, numbers, and symbols.
+              </div>
+              <form method="POST" action="/admin/change-password">
+                <div class="form-group">
+                  <label class="admin-form-label">Current Password</label>
+                  <input type="password" name="currentPassword" class="admin-form-input" placeholder="Enter your current password" required>
+                </div>
+                <div class="form-group">
+                  <label class="admin-form-label">New Password</label>
+                  <input type="password" name="newPassword" class="admin-form-input" placeholder="Enter new password (min 6 chars)" minlength="6" required id="newPassInput">
+                </div>
+                <!-- Strength Bar -->
+                <div id="strengthWrap" style="display:none;margin-bottom:16px;">
+                  <div class="strength-bar-wrap">
+                    <div class="strength-bar-fill" id="strengthBar"></div>
+                  </div>
+                  <div style="font-size:12px;color:#64748b;margin-top:4px;" id="strengthLabel"></div>
+                </div>
+                <div class="form-group">
+                  <label class="admin-form-label">Confirm New Password</label>
+                  <input type="password" name="confirmPassword" class="admin-form-input" placeholder="Re-enter new password" required>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary">
+                  <i class="fas fa-key"></i> Update Password
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recovery Key Info -->
+      <div class="admin-panel" style="margin-top:24px;">
+        <div class="admin-panel-header">
+          <div class="admin-panel-title"><i class="fas fa-unlock-keyhole"></i> Recovery Key</div>
+        </div>
+        <div class="admin-panel-body">
+          <p style="font-size:14px;color:#64748b;line-height:1.7;margin-bottom:16px;">
+            The recovery key is used on the <a href="/admin/forgot-password" style="color:#818cf8;">Forgot Password</a> page.
+            To change it, edit the <code style="background:rgba(99,102,241,0.1);color:#818cf8;padding:2px 8px;border-radius:4px;">.env</code> file and update <code style="background:rgba(99,102,241,0.1);color:#818cf8;padding:2px 8px;border-radius:4px;">ADMIN_RECOVERY_KEY</code>, then restart the server.
+          </p>
+          <div style="padding:14px 18px;background:rgba(26,26,56,0.8);border:1px solid rgba(99,102,241,0.2);border-radius:10px;font-family:monospace;font-size:13px;color:#818cf8;">
+            ADMIN_RECOVERY_KEY=ShieldHub@Recovery#2026
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(name, btn){
+    document.querySelectorAll('.settings-tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Password strength
+  const newPassInput = document.getElementById('newPassInput');
+  if(newPassInput){
+    newPassInput.addEventListener('input', function(){
+      const val = this.value;
+      const wrap = document.getElementById('strengthWrap');
+      const bar = document.getElementById('strengthBar');
+      const label = document.getElementById('strengthLabel');
+      if(!val){ wrap.style.display='none'; return; }
+      wrap.style.display = 'block';
+      let score = 0;
+      if(val.length >= 6) score++;
+      if(val.length >= 10) score++;
+      if(/[A-Z]/.test(val)) score++;
+      if(/[0-9]/.test(val)) score++;
+      if(/[^A-Za-z0-9]/.test(val)) score++;
+      const levels = [
+        { w:'20%', bg:'#ef4444', t:'Very Weak' },
+        { w:'40%', bg:'#f97316', t:'Weak' },
+        { w:'60%', bg:'#f59e0b', t:'Fair' },
+        { w:'80%', bg:'#22d3ee', t:'Strong' },
+        { w:'100%', bg:'#10b981', t:'Very Strong ✓' },
+      ];
+      const lvl = levels[Math.min(score, 4)];
+      bar.style.width = lvl.w;
+      bar.style.background = lvl.bg;
+      label.textContent = lvl.t;
+      label.style.color = lvl.bg;
+    });
+  }
+
+  const adminHamburger = document.getElementById('adminHamburger');
+  const adminSidebar = document.getElementById('adminSidebar');
+  adminHamburger && adminHamburger.addEventListener('click', ()=> adminSidebar.classList.toggle('open'));
+</script>

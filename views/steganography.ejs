@@ -1,0 +1,1052 @@
+<%- include('partials/header', { title: 'Steganography Tool' }) %>
+
+    <div class="steganography-page-wrapper">
+        <!-- Hero Section -->
+        <section class="stego-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-icon-wrapper">
+                        <div class="hero-icon-glow"></div>
+                        <i class="fas fa-user-secret hero-icon"></i>
+                    </div>
+                    <h1 class="hero-title">Steganography <span class="highlight">Tool</span></h1>
+                    <p class="hero-subtitle">Securely hide your secrets inside ordinary images. Invisible to the naked
+                        eye, readable only by you.</p>
+                </div>
+            </div>
+            <div class="hero-bg-accent"></div>
+        </section>
+
+        <!-- Main Tool Interface -->
+        <div class="container">
+
+            <!-- Educational Disclaimer -->
+            <div class="disclaimer-wrapper">
+                <div class="disclaimer-content">
+                    <i class="fas fa-graduation-cap disclaimer-icon"></i>
+                    <p>
+                        <span class="disclaimer-title">For Educational Purposes Only:</span>
+                        This Steganography tool is designed to demonstrate data concealing techniques for educational
+                        purposes and ethical security research.
+                        Users are strictly advised to use this technology responsibly. We do not endorse any illegal use
+                        of hiding data to bypass security controls.
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <!-- Tabs -->
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('encode')" id="tab-encode">
+                        <i class="fas fa-lock"></i> Hide Message
+                    </button>
+                    <button class="nav-tab" onclick="switchTab('decode')" id="tab-decode">
+                        <i class="fas fa-unlock"></i> Reveal Message
+                    </button>
+                    <div class="tab-indicator"></div>
+                </div>
+
+                <!-- ENCODE (Hide) Panel -->
+                <div id="panel-encode" class="panel-content active">
+                    <div class="workflow-grid">
+                        <!-- Step 1: Upload -->
+                        <div class="workflow-step">
+                            <div class="step-header">
+                                <span class="step-badge">1</span>
+                                <h3>Upload Cover Image</h3>
+                            </div>
+                            <div class="upload-area" id="encode-upload-area">
+                                <input type="file" id="encode-file" accept="image/png, image/jpeg" hidden>
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & Drop or Click to Upload</p>
+                                    <span class="file-hint">Supports PNG, JPG (Auto-converts to PNG)</span>
+                                </div>
+                                <div class="image-preview hidden" id="encode-preview-container">
+                                    <img id="encode-preview-img" src="" alt="Cover Image">
+                                    <button class="remove-img-btn" onclick="resetEncode()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Message -->
+                        <div class="workflow-step">
+                            <div class="step-header">
+                                <span class="step-badge">2</span>
+                                <h3>Enter Secret Message</h3>
+                            </div>
+                            <div class="message-area">
+                                <textarea id="secret-message" placeholder="Type your secret message here..."></textarea>
+                                <div class="message-meta">
+                                    <span id="char-count">0 characters</span>
+                                    <span id="capacity-status" class="capacity-ok">Capacity: <span
+                                            id="capacity-percentage">0%</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Area -->
+                    <div class="action-area">
+                        <button class="btn-action btn-encode" onclick="processEncode()">
+                            <span class="btn-text"><i class="fas fa-magic"></i> Encrypt & Hide</span>
+                            <div class="btn-loader hidden"></div>
+                        </button>
+                        <p class="security-note"><i class="fas fa-shield-alt"></i> All processing happens offline in
+                            your browser. No data opens server.</p>
+                    </div>
+
+                    <!-- Success Result (Hidden by default) -->
+                    <div id="encode-result" class="result-overlay hidden">
+                        <div class="result-content">
+                            <div class="success-anim">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h2>Message Hidden Successfully!</h2>
+                            <p>Your secret message has been embedded into the image.</p>
+                            <div class="result-actions">
+                                <a id="download-link" class="btn-download">
+                                    <i class="fas fa-download"></i> Download Image
+                                </a>
+                                <button class="btn-secondary" onclick="resetEncodeUI()">Create Another</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DECODE (Reveal) Panel -->
+                <div id="panel-decode" class="panel-content">
+                    <div class="decode-layout">
+                        <div class="workflow-step">
+                            <div class="step-header">
+                                <span class="step-badge">1</span>
+                                <h3>Upload Encrypted Image</h3>
+                            </div>
+                            <div class="upload-area" id="decode-upload-area">
+                                <input type="file" id="decode-file" accept="image/png" hidden>
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-file-image"></i>
+                                    <p>Upload Stego-Image</p>
+                                    <span class="file-hint">Must be the original PNG file</span>
+                                </div>
+                                <div class="image-preview hidden" id="decode-preview-container">
+                                    <img id="decode-preview-img" src="" alt="Encrypted Image">
+                                    <button class="remove-img-btn" onclick="resetDecode()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="decode-action-wrapper">
+                            <button class="btn-action btn-decode" onclick="processDecode()">
+                                <span class="btn-text"><i class="fas fa-eye"></i> Reveal Message</span>
+                                <div class="btn-loader hidden"></div>
+                            </button>
+                        </div>
+
+                        <!-- Decoded Result -->
+                        <div id="decode-result" class="decoded-result hidden">
+                            <h3><i class="fas fa-unlock-alt"></i> Decoded Message:</h3>
+                            <div class="message-reveal-box">
+                                <p id="revealed-message">--</p>
+                                <button class="copy-btn" onclick="copyDecoded()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* --- CSS Variables & Theming --- */
+        :root {
+            --primary-gradient: var(--grad-primary);
+            --surface-glass: var(--glass-bg);
+            --surface-glass-border: var(--glass-border);
+            --text-main: var(--text-1);
+            --text-offset: var(--text-2);
+            --bg-body: var(--bg);
+            --card-shadow: var(--shadow-lg);
+            --input-bg: var(--bg-input);
+        }
+
+        [data-theme="dark"] {
+            --primary-gradient: var(--grad-primary);
+            --surface-glass: var(--glass-bg);
+            --surface-glass-border: var(--glass-border);
+            --text-main: var(--text-1);
+            --text-offset: var(--text-2);
+            --bg-body: var(--bg);
+            --card-shadow: var(--shadow-lg);
+            --input-bg: var(--bg-input);
+        }
+
+        /* --- Layout Structure --- */
+        .steganography-page-wrapper {
+            min-height: 80vh;
+            background-color: var(--bg-body);
+            padding-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- Hero Section --- */
+        .stego-hero {
+            position: relative;
+            padding: 80px 0 60px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .hero-icon {
+            font-size: 64px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
+        }
+
+        .hero-icon-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            filter: blur(40px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .highlight {
+            color: #6366f1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-offset);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .hero-bg-accent {
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        /* --- Glass Panel --- */
+        .glass-panel {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--surface-glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- Tabs --- */
+        .nav-tabs {
+            display: flex;
+            position: relative;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 40px;
+            gap: 0;
+        }
+
+        [data-theme="dark"] .nav-tabs {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-tab {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-offset);
+            cursor: pointer;
+            z-index: 2;
+            transition: color 0.3s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-tab.active {
+            color: #fff;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: calc(50% - 6px);
+            height: calc(100% - 12px);
+            background: var(--primary-gradient);
+            border-radius: 8px;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- Workflow Grid --- */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .workflow-step h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .step-badge {
+            width: 28px;
+            height: 28px;
+            background: var(--text-main);
+            color: var(--bg-body);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* --- Uplod Area --- */
+        .upload-area {
+            border: 2px dashed var(--surface-glass-border);
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            height: 250px;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .upload-placeholder i {
+            font-size: 40px;
+            color: var(--text-offset);
+            margin-bottom: 12px;
+            transition: transform 0.3s;
+        }
+
+        .upload-area:hover .upload-placeholder i {
+            transform: scale(1.1);
+            color: #6366f1;
+        }
+
+        .upload-placeholder p {
+            color: var(--text-main);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .file-hint {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-offset);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            background: black;
+            position: relative;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .remove-img-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .remove-img-btn:hover {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        /* --- Message Area --- */
+        .message-area textarea {
+            width: 100%;
+            height: 250px;
+            background: var(--input-bg);
+            border: 1px solid var(--surface-glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+
+        .message-area textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--text-offset);
+        }
+
+        /* --- Action Area --- */
+        .action-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .security-note {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--text-offset);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* --- Result Overlay --- */
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--surface-glass);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-content {
+            text-align: center;
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .success-anim {
+            font-size: 64px;
+            color: #10b981;
+            margin-bottom: 24px;
+            animation: iconPop 0.5s ease;
+        }
+
+        .result-content h2 {
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .btn-download {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--text-offset);
+            color: var(--text-offset);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- Decoded Result --- */
+        .decoded-result {
+            margin-top: 30px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .decoded-result h3 {
+            color: #6366f1;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-reveal-box {
+            background: var(--input-bg);
+            padding: 16px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .message-reveal-box p {
+            word-break: break-word;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-offset);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .copy-btn:hover {
+            color: #6366f1;
+        }
+
+        /* --- Helpers --- */
+        .hidden {
+            display: none !important;
+        }
+
+        .panel-content {
+            display: none;
+        }
+
+        .panel-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes iconPop {
+            0% {
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Loader */
+        .btn-loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -12px;
+            margin-left: -12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <style>
+        /* --- Disclaimer Added Styles --- */
+        .disclaimer-wrapper {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .disclaimer-content {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        .disclaimer-icon {
+            font-size: 1.5rem;
+            color: #6366f1;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .disclaimer-content p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .disclaimer-title {
+            font-weight: 700;
+            color: #6366f1;
+            margin-right: 4px;
+        }
+
+        [data-theme="dark"] .disclaimer-content {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+    </style>
+
+    <script>
+        // --- State ---
+        const state = {
+            encodeImage: null,
+            decodeImage: null
+        };
+
+        // --- Tabs Logic ---
+        function switchTab(mode) {
+            // UI Tabs
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+
+            document.getElementById(`tab-${mode}`).classList.add('active');
+            document.getElementById(`panel-${mode}`).classList.add('active');
+
+            // Move Indicator
+            const indicator = document.querySelector('.tab-indicator');
+            if (mode === 'encode') {
+                indicator.style.transform = 'translateX(0)';
+            } else {
+                indicator.style.transform = 'translateX(100%)';
+            }
+        }
+
+        // --- Utility: Simulate Loading ---
+        function simulateProcessing(btnSelector, callback) {
+            const btn = document.querySelector(btnSelector);
+            const text = btn.querySelector('.btn-text');
+            const loader = btn.querySelector('.btn-loader');
+
+            // Lock button
+            btn.disabled = true;
+            text.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            // Fake delay 1.5s for realism
+            setTimeout(() => {
+                btn.disabled = false;
+                text.classList.remove('hidden');
+                loader.classList.add('hidden');
+                callback();
+            }, 1500);
+        }
+
+        // --- ENCODE: Upload Functions ---
+        const encodeArea = document.getElementById('encode-upload-area');
+        const encodeInput = document.getElementById('encode-file');
+
+        encodeArea.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-img-btn')) return;
+            encodeInput.click();
+        });
+
+        encodeInput.addEventListener('change', (e) => loadEncodeImage(e.target.files[0]));
+
+        // Drag & Drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            encodeArea.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        encodeArea.addEventListener('drop', (e) => loadEncodeImage(e.dataTransfer.files[0]));
+
+        function loadEncodeImage(file) {
+            if (!file || !file.type.match('image.*')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    state.encodeImage = img;
+                    document.getElementById('encode-preview-img').src = e.target.result;
+                    document.getElementById('encode-preview-container').classList.remove('hidden');
+                    document.querySelector('#encode-upload-area .upload-placeholder').classList.add('hidden');
+                    updateCapacity(); // Calc real capacity
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetEncode() {
+            state.encodeImage = null;
+            encodeInput.value = '';
+            document.getElementById('encode-preview-container').classList.add('hidden');
+            document.querySelector('#encode-upload-area .upload-placeholder').classList.remove('hidden');
+            document.getElementById('capacity-percentage').innerText = '0%';
+            document.getElementById('secret-message').value = '';
+        }
+
+        function resetEncodeUI() {
+            resetEncode();
+            document.getElementById('encode-result').classList.add('hidden');
+        }
+
+        // --- ENCODE: Capacity Logic ---
+        const msgInput = document.getElementById('secret-message');
+        msgInput.addEventListener('input', updateCapacity);
+
+        function updateCapacity() {
+            const msg = msgInput.value;
+            document.getElementById('char-count').innerText = `${msg.length} characters`;
+
+            if (state.encodeImage) {
+                // Approx capacity: (Width * Height * 3 channels) / 8 bits
+                // We store 1 bit per channel.
+                const totalPixels = state.encodeImage.width * state.encodeImage.height;
+                const maxBytes = Math.floor((totalPixels * 3) / 8);
+                // Header overhead is small (16 bits for length), ignore for simple % Calc
+                const usedPercentage = Math.min(100, ((msg.length + 2) / maxBytes) * 100).toFixed(2);
+                document.getElementById('capacity-percentage').innerText = `${usedPercentage}%`;
+
+                const status = document.getElementById('capacity-status');
+                if (usedPercentage > 90) status.style.color = '#ef4444';
+                else status.style.color = 'var(--text-offset)';
+            }
+        }
+
+        // --- ENCODE: Process ---
+        function processEncode() {
+            if (!state.encodeImage) {
+                alert('Please upload a cover image first.');
+                return;
+            }
+            const text = msgInput.value;
+            if (!text) {
+                alert('Please enter a secret message.');
+                return;
+            }
+
+            simulateProcessing('.btn-encode', () => {
+                // Actual Logic
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = state.encodeImage.width;
+                canvas.height = state.encodeImage.height;
+                ctx.drawImage(state.encodeImage, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                const binaryMessage = toBinary(text);
+
+                if (binaryMessage.length > (data.length / 4) * 3) {
+                    alert('Message is too large for this image!');
+                    return;
+                }
+
+                let dataIndex = 0;
+                for (let i = 0; i < binaryMessage.length; i++) {
+                    if ((dataIndex + 1) % 4 === 0) dataIndex++; // Skip alpha
+                    const bit = parseInt(binaryMessage[i]);
+                    if (data[dataIndex] % 2 !== bit) {
+                        if (bit === 1) data[dataIndex]++;
+                        else data[dataIndex]--;
+                    }
+                    dataIndex++;
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+
+                // Set Download Link
+                const resultUrl = canvas.toDataURL('image/png');
+                const dlLink = document.getElementById('download-link');
+                dlLink.href = resultUrl;
+                dlLink.download = `stego_secret_${Date.now()}.png`;
+
+                // Show Success UI
+                document.getElementById('encode-result').classList.remove('hidden');
+            });
+        }
+
+        // --- DECODE: Functions ---
+        const decodeArea = document.getElementById('decode-upload-area');
+        const decodeInput = document.getElementById('decode-file');
+
+        decodeArea.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-img-btn')) return;
+            decodeInput.click();
+        });
+
+        decodeInput.addEventListener('change', (e) => loadDecodeImage(e.target.files[0]));
+        decodeArea.addEventListener('drop', (e) => loadDecodeImage(e.dataTransfer.files[0]));
+
+        function loadDecodeImage(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    state.decodeImage = img;
+                    document.getElementById('decode-preview-img').src = e.target.result;
+                    document.getElementById('decode-preview-container').classList.remove('hidden');
+                    document.querySelector('#decode-upload-area .upload-placeholder').classList.add('hidden');
+                    document.getElementById('decode-result').classList.add('hidden');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetDecode() {
+            state.decodeImage = null;
+            decodeInput.value = '';
+            document.getElementById('decode-preview-container').classList.add('hidden');
+            document.querySelector('#decode-upload-area .upload-placeholder').classList.remove('hidden');
+            document.getElementById('decode-result').classList.add('hidden');
+        }
+
+        function processDecode() {
+            if (!state.decodeImage) {
+                alert('Please upload an encrypted image first.');
+                return;
+            }
+
+            simulateProcessing('.btn-decode', () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = state.decodeImage.width;
+                canvas.height = state.decodeImage.height;
+                ctx.drawImage(state.decodeImage, 0, 0);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+
+                let extractedBits = [];
+                let dataIndex = 0;
+
+                // 1. Get Length (16 bits)
+                while (extractedBits.length < 16) {
+                    if ((dataIndex + 1) % 4 === 0) dataIndex++;
+                    extractedBits.push(data[dataIndex] % 2);
+                    dataIndex++;
+                }
+                const length = parseInt(extractedBits.join(''), 2);
+
+                // Validation
+                if (length === 0 || length > 100000 || isNaN(length)) {
+                    alert('No valid hidden message found.');
+                    return;
+                }
+
+                // 2. Get Message
+                extractedBits = [];
+                const totalBits = length * 8;
+                while (extractedBits.length < totalBits) {
+                    if ((dataIndex + 1) % 4 === 0) dataIndex++;
+                    extractedBits.push(data[dataIndex] % 2);
+                    dataIndex++;
+                }
+
+                let message = "";
+                for (let i = 0; i < length; i++) {
+                    const byte = extractedBits.slice(i * 8, (i + 1) * 8).join('');
+                    message += String.fromCharCode(parseInt(byte, 2));
+                }
+
+                document.getElementById('revealed-message').innerText = message;
+                document.getElementById('decode-result').classList.remove('hidden');
+            });
+        }
+
+        function copyDecoded() {
+            const text = document.getElementById('revealed-message').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+
+        // --- Helpers: Binary ---
+        function toBinary(text) {
+            const binary = [];
+            // Length Header (16 bits)
+            const len = text.length.toString(2).padStart(16, '0');
+            for (let c of len) binary.push(c);
+
+            // Content
+            for (let i = 0; i < text.length; i++) {
+                const bin = text.charCodeAt(i).toString(2).padStart(8, '0');
+                for (let c of bin) binary.push(c);
+            }
+            return binary;
+        }
+    </script>
+
+    <%- include('partials/footer') %>
