@@ -1,7 +1,11 @@
 # 🛡️ ShieldHub — Everything about protection in one hub
 
 <p align="center">
-  <img src="./public/images/screenshot.png" alt="ShieldHub Banner" width="700" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);" />
+  <img src="./public/images/public/images/Screenshot 2026-07-20 111001.png" alt="ShieldHub Banner" width="700" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);" />
+</p>
+
+<p align="center">
+  <img src="./public/images/public/images/Screenshot 2026-07-20 111021.png" alt="ShieldHub Banner" width="700" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);" />
 </p>
 
 <p align="center">
