@@ -56,7 +56,9 @@ app.use((req, res, next) => {
 // DATABASE CONNECTION
 // ============================================================
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/shieldhub')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/shieldhub', {
+  serverSelectionTimeoutMS: 5000 // Fast fail if database is unreachable (prevents infinite hanging on Render)
+})
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 

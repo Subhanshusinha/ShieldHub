@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const Article = require('../models/Article');
 const Quiz = require('../models/Quiz');
@@ -9,6 +10,11 @@ const path = require('path');
 const fs = require('fs');
 
 const upload = require('../middleware/upload');
+
+// Redirect /admin to /admin/login
+router.get('/', (req, res) => {
+    res.redirect('/admin/login');
+});
 
 // Middleware to check if user is authenticated
 const isAuthenticated = (req, res, next) => {
@@ -21,6 +27,26 @@ const isAuthenticated = (req, res, next) => {
 // Initialize default admin if none exists
 const initializeAdmin = async () => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            // Wait for connection to open before initializing
+            mongoose.connection.once('open', async () => {
+                try {
+                    const adminCount = await Admin.countDocuments();
+                    if (adminCount === 0) {
+                        const defaultAdmin = new Admin({
+                            username: process.env.DEFAULT_ADMIN_USERNAME || 'admin',
+                            password: process.env.DEFAULT_ADMIN_PASSWORD || 'admin123'
+                        });
+                        await defaultAdmin.save();
+                        console.log('Default admin initialized successfully.');
+                    }
+                } catch (err) {
+                    console.error('Error initializing admin after connection open:', err);
+                }
+            });
+            return;
+        }
+
         const adminCount = await Admin.countDocuments();
         if (adminCount === 0) {
             const defaultAdmin = new Admin({
@@ -28,13 +54,14 @@ const initializeAdmin = async () => {
                 password: process.env.DEFAULT_ADMIN_PASSWORD || 'admin123'
             });
             await defaultAdmin.save();
+            console.log('Default admin initialized successfully.');
         }
     } catch (error) {
         console.error('Error initializing admin:', error);
     }
 };
 
-// Initialize admin on module load
+// Initialize admin on module load / connection open
 initializeAdmin();
 
 // ============================================
@@ -54,7 +81,19 @@ router.get('/login', (req, res) => {
     if (req.session && req.session.isAdmin) {
         return res.redirect('/admin/dashboard');
     }
+    
     const captcha = generateCaptcha();
+
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+        return res.render('admin-login', {
+            title: 'Admin Login',
+            error: 'Database connection is not established. Please check your database settings and ensure your IP is whitelisted.',
+            captchaNum1: captcha.num1,
+            captchaNum2: captcha.num2
+        });
+    }
+
     res.render('admin-login', {
         title: 'Admin Login',
         error: null,
@@ -70,6 +109,16 @@ router.post('/login', async (req, res) => {
 
         // Generate new CAPTCHA for potential error response
         const newCaptcha = generateCaptcha();
+
+        // Check if database is connected
+        if (mongoose.connection.readyState !== 1) {
+            return res.render('admin-login', {
+                title: 'Admin Login',
+                error: 'Database connection is not established. Please check your database settings and ensure your IP is whitelisted.',
+                captchaNum1: newCaptcha.num1,
+                captchaNum2: newCaptcha.num2
+            });
+        }
 
         // Validate CAPTCHA
         const expectedAnswer = parseInt(captchaNum1) + parseInt(captchaNum2);
