@@ -850,11 +850,11 @@
                             <i class="fas fa-newspaper"></i> All Articles
                         </h2>
                         <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
-                            <button class="filter-btn" onclick="filterByCategory('breach')">🔓 Breach</button>
-                            <button class="filter-btn" onclick="filterByCategory('phishing')">🎣 Phishing</button>
-                            <button class="filter-btn" onclick="filterByCategory('malware')">💀 Malware</button>
-                            <button class="filter-btn" onclick="filterByCategory('ransomware')">🔒 Ransomware</button>
+                            <button class="filter-btn active" onclick="filterByCategory('all', this)">All</button>
+                            <button class="filter-btn" onclick="filterByCategory('breach', this)">🔓 Breach</button>
+                            <button class="filter-btn" onclick="filterByCategory('phishing', this)">🎣 Phishing</button>
+                            <button class="filter-btn" onclick="filterByCategory('malware', this)">💀 Malware</button>
+                            <button class="filter-btn" onclick="filterByCategory('ransomware', this)">🔒 Ransomware</button>
                         </div>
                     </div>
 
@@ -956,10 +956,10 @@
             });
         }
 
-        function filterByCategory(category) {
+        function filterByCategory(category, btn) {
             var buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(function (btn) { btn.classList.remove('active'); });
-            event.target.classList.add('active');
+            buttons.forEach(function (b) { b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
 
             var cards = document.querySelectorAll('.cyber-article-card');
             cards.forEach(function (card) {

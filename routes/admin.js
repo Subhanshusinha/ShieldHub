@@ -315,6 +315,7 @@ router.get('/articles', isAuthenticated, async (req, res) => {
         res.render('admin-articles', {
             title: 'Manage Articles',
             articles: [],
+            username: req.session.adminUsername || 'Admin',
             success: null,
             error: 'Error loading articles'
         });
@@ -424,7 +425,6 @@ router.post('/articles/edit/:id', isAuthenticated, upload.single('image'), async
 // Quiz Management Routes
 // ============================================
 
-// GET - Quiz Management Page
 // GET - Quiz Management Page
 router.get('/quiz', isAuthenticated, async (req, res) => {
     try {

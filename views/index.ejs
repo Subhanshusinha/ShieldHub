@@ -1344,13 +1344,13 @@
             // Show result message based on performance
             const percentage = (quizScore / totalQuestions) * 100;
             if (percentage >= 80) {
-                resultMessage.textContent = 'ðŸŽ‰ Excellent! You\'re a cybersecurity expert!';
+                resultMessage.textContent = '🎉 Excellent! You\'re a cybersecurity expert!';
                 resultMessage.className = 'quiz-result-message excellent';
             } else if (percentage >= 50) {
-                resultMessage.textContent = 'ðŸ‘ Good job! Keep learning to improve!';
+                resultMessage.textContent = '👍 Good job! Keep learning to improve!';
                 resultMessage.className = 'quiz-result-message good';
             } else {
-                resultMessage.textContent = 'ðŸ“š Keep practicing! Cybersecurity knowledge is important!';
+                resultMessage.textContent = '📚 Keep practicing! Cybersecurity knowledge is important!';
                 resultMessage.className = 'quiz-result-message try-again';
             }
         }

@@ -73,8 +73,8 @@
                 </td>
                 <td>
                   <% 
-                    const catColors = {breach:'badge-danger',malware:'badge-warning',phishing:'badge-danger',privacy:'badge-primary',general:'badge-cyan'};
-                    const cat = article.category || 'general';
+                    const catColors = {breach:'badge-danger',malware:'badge-warning',phishing:'badge-danger',ransomware:'badge-primary',scam:'badge-cyan'};
+                    const cat = article.category || 'breach';
                     const catClass = catColors[cat] || 'badge-primary';
                   %>
                   <span class="badge <%= catClass %>"><%= cat %></span>
@@ -89,7 +89,7 @@
                         <i class="fas fa-arrow-up-right-from-square"></i>
                       </a>
                     <% } %>
-                    <button class="admin-btn admin-btn-warning" style="padding:6px 12px;font-size:12px;" onclick='openEditModal(<%- JSON.stringify(article) %>)' title="Edit">
+                    <button class="admin-btn admin-btn-warning" style="padding:6px 12px;font-size:12px;" onclick="openEditModal('<%= article._id %>')" title="Edit">
                       <i class="fas fa-pen"></i>
                     </button>
                     <button class="admin-btn admin-btn-danger" style="padding:6px 12px;font-size:12px;" onclick="confirmDelete('<%= article._id %>', '<%= article.title.replace(/'/g, `\\'`) %>')" title="Delete">
@@ -122,18 +122,18 @@
           <input type="text" name="title" class="admin-form-input" placeholder="Enter article title..." required>
         </div>
         <div class="form-group">
-          <label class="admin-form-label">Description</label>
-          <textarea name="description" class="admin-form-input" rows="3" placeholder="Brief description..."></textarea>
+          <label class="admin-form-label">Description *</label>
+          <textarea name="description" class="admin-form-input" rows="3" placeholder="Brief description..." required></textarea>
         </div>
         <div class="admin-form-grid">
           <div class="form-group">
             <label class="admin-form-label">Category</label>
             <select name="category" class="admin-form-input">
               <option value="breach">Breach</option>
-              <option value="malware">Malware</option>
               <option value="phishing">Phishing</option>
-              <option value="privacy">Privacy</option>
-              <option value="general">General</option>
+              <option value="malware">Malware</option>
+              <option value="ransomware">Ransomware</option>
+              <option value="scam">Scam</option>
             </select>
           </div>
           <div class="form-group">
@@ -180,10 +180,10 @@
             <label class="admin-form-label">Category</label>
             <select name="category" id="editCat" class="admin-form-input">
               <option value="breach">Breach</option>
-              <option value="malware">Malware</option>
               <option value="phishing">Phishing</option>
-              <option value="privacy">Privacy</option>
-              <option value="general">General</option>
+              <option value="malware">Malware</option>
+              <option value="ransomware">Ransomware</option>
+              <option value="scam">Scam</option>
             </select>
           </div>
           <div class="form-group">
@@ -228,18 +228,28 @@
 </div>
 
 <script>
+  const articlesList = <%- JSON.stringify(articles).replace(/</g, '\\u003c') %>;
+
   function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
   function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
   document.querySelectorAll('.admin-modal-backdrop').forEach(m => m.addEventListener('click', function(e){ if(e.target===this) closeModal(this.id); }));
   function openAddModal(){ openModal('addModal'); }
-  function openEditModal(article){
+  function openEditModal(id){
+    const article = articlesList.find(a => a._id === id);
+    if(!article) return;
     document.getElementById('editForm').action = '/admin/articles/edit/' + article._id;
     document.getElementById('editTitle').value = article.title || '';
     document.getElementById('editDesc').value = article.description || '';
     document.getElementById('editUrl').value = article.websiteUrl || '';
     document.getElementById('editImgUrl').value = article.image && article.image.startsWith('http') ? article.image : '';
     const catSel = document.getElementById('editCat');
-    for(let o of catSel.options){ if(o.value === article.category) o.selected = true; }
+    for(let o of catSel.options){ 
+      if(o.value === article.category) {
+        o.selected = true; 
+      } else {
+        o.selected = false;
+      }
+    }
     openModal('editModal');
   }
   function confirmDelete(id, title){

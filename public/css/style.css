@@ -1955,6 +1955,10 @@ select.form-control { appearance: none; cursor: pointer; }
 .admin-form-input::placeholder { color: #334155; }
 textarea.admin-form-input { min-height: 100px; resize: vertical; }
 select.admin-form-input { appearance: none; cursor: pointer; }
+select.admin-form-input option {
+  background-color: #1a1a38;
+  color: #ffffff;
+}
 
 /* Admin Buttons */
 .admin-btn {

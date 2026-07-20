@@ -3,9 +3,6 @@ const router = express.Router();
 
 const Article = require('../models/Article');
 
-// Shared upload middleware not needed here as we removed the POST route that used it
-// const upload = require('../middleware/upload');
-
 // Get all articles
 router.get('/', async (req, res) => {
   try {
@@ -19,10 +16,6 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Error fetching articles' });
   }
 });
-
-
-
-
 
 // Get article by ID
 router.get('/:id', async (req, res) => {
@@ -42,5 +35,3 @@ router.get('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
-
